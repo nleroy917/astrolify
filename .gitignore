@@ -1,0 +1,7 @@
+# python
+env/
+__pycache__
+
+# keys and secrets
+.google/
+.env
