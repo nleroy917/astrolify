@@ -19,10 +19,12 @@ class Horoscope:
         Create a new horoscope class with the following properties:
             -> date - date of the horoscope
             -> type - the type (Sun, Moon, or Rising)
-            -> sign - the sign for the horoscope (e.g. Virgo, Scorpio, Cancer, Aries, etc)
+            -> sign - the sign for the horoscope (e.g. Virgo, Scorpio, Cancer,
+                Aries, etc)
             -> content - the actual horoscope text/content/reading
             -> source - the source of the horoscope
-            -> sentiment - a sentiment object to store the sentiment and magnitude
+            -> sentiment - a sentiment object to store the sentiment and
+                magnitude
         """
         self.date = date
         self.type = type

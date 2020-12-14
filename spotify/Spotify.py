@@ -3,31 +3,41 @@ from spotipy.oauth2 import SpotifyOAuth
 import os
 import base64
 
+
 class SpotifyClient:
     """
-    Class to interface the Spotfiy API. Authentication can be done server-side headless and in development envs.
-    
-    Main intent of the class is to be used with a refresh token stored in a database.
+    Class to interface the Spotfiy API. Authentication can be done
+    server-side headless and in development envs.
 
-    Fresh access tokens can be passed to the class as well - probably on instances of first authentication client-side
+    Main intent of the class is to be used with a refresh token
+    stored in a database.
+
+    Fresh access tokens can be passed to the class as well -
+    probably on instances of first authentication client-side
     """
-        # loads the environment from a .env file
+    # loads the environment from a .env file
     from dotenv import load_dotenv
     load_dotenv()
 
     def __init__(self, access_token=None, refresh_token=None):
 
-        self._scope = 'ugc-image-upload user-top-read playlist-modify-public playlist-read-collaborative'
+        self._scope = '''ugc-image-upload
+                         user-top-read
+                         playlist-modify-public
+                         playlist-read-collaborative
+                      '''
 
-        # case where an access_token is passed directly in (first authentication, specific use cases maybe)
+        # case where an access_token is passed directly in (first
+        # authentication, specific use cases maybe)
         if access_token:
             self._spotify = spotipy.Spotify(auth=access_token)
             self._access_token = access_token
             self._refresh_token = None
 
-        # typical use - refresh_token taken from a database and used to create a new access_token
+        # typical use - refresh_token taken from a database and used to create
+        # a new access_token
         elif refresh_token:
-            auth=SpotifyOAuth(
+            auth = SpotifyOAuth(
                 client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
                 client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
             )
@@ -47,7 +57,7 @@ class SpotifyClient:
             ))
             self._access_token = None
             self._refresh_token = None
-    
+
     def current_user_top_tracks(self):
         """
         Get the current authenticated user's top tracks
@@ -59,55 +69,60 @@ class SpotifyClient:
         Get the current authenticated user's top artists
         """
         return self._spotify.current_user_top_artists()['items']
-    
+
     def get_playlist(self, id):
         """
         Get a playlist object based on it's id
             :param id: the playlist id
-        
+
         Returns the playlist object
         """
         return self._spotify.playlist(id)
-    
+
     def create_playlist(self, name, img=None):
         """
         Create a playlist for the currently authenticated user
             :param name: - Name of the playlist
             :param img: - path to image of the playlist
-        
+
         Returns the created playlist object
         """
         # create description
-        desc = '''Your daily mixtape of fresh music based on your horoscope for today.'''
+        desc = '''Your daily mixtape of fresh music based on your horoscope
+                  for today.'''
 
         # get the current user
         user = self._spotify.current_user()
 
         # create playlist
-        playlist = self._spotify.user_playlist_create(user=user['id'], name=name, description=desc)
-        
+        playlist = self._spotify.user_playlist_create(
+            user=user['id'], name=name, description=desc)
+
         # if image url specified, add cover arts
-        if image:
+        if img:
             # encode the image in base 64
             with open(img, 'rb') as image_file:
                 encoded_string = base64.b64encode(image_file.read())
-            self._spotify.playlist_upload_cover_image(playlist['id'], encoded_string)
+            self._spotify.playlist_upload_cover_image(
+                playlist['id'], encoded_string)
 
         return playlist
-    
+
     def get_recommendations(self, seeds, **parameters):
         """
         Get song recommendations based on seeds
-            :param seeds: - list of tracks, artists, or genres to seed the recommendation algorithm with
+            :param seeds: - list of tracks, artists, or genres to seed the
+            recommendation algorithm with
         """
         return self._spotify.recommendations()
 
-    def clear_playlist(self,id):
+    def clear_playlist(self, id):
         """
         Clear out a playlist so that it doesn't have any tracks and is fresh.
             :param id: The id of the playlist to clear out
         """
-        return self._spotify.playlist_remove_all_occurrences_of_items(id, items=self._spotify.playlist_items(id))
+        return self._spotify.playlist_remove_all_occurrences_of_items(
+            id, items=self._spotify.playlist_items(id))
 
     def add_tracks_to_playlist(self, id, tracks):
         """

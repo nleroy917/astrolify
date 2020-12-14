@@ -21,7 +21,8 @@ class HoroscopeClient:
     def get_horoscope(self, sign, date, raw=False):
         """
         Get a horoscope
-            -> raw indicates whether to return raw data or return as a horoscope class
+            :param raw: indicates whether to return raw data or return as a
+              horoscope class
         """
         res = self._post(sign=sign, date=date)
         data = res.json()

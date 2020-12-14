@@ -13,4 +13,3 @@ print(sentiment)
 
 for entity in entities:
     print(entities)
-
