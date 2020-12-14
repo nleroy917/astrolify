@@ -47,3 +47,21 @@ class SpotifyClient:
             ))
             self._access_token = None
             self._refresh_token = None
+    
+    def current_user_top_tracks(self):
+        """
+        Get the current authenticated user's top tracks
+        """
+        return self._spotify.current_user_top_tracks()['items']
+
+    def current_user_top_artists(self):
+        """
+        Get the current authenticated user's top artists
+        """
+        return self._spotify.current_user_top_artists()['items']
+    
+    def get_recommendations(self, seeds, **parameters):
+        """
+        Get song recommendations based on seeds
+        """
+        return self._spotify.recommendations()
