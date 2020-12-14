@@ -4,8 +4,11 @@ import os
 
 class SpotifyClient:
     """
-    Class to interface the Spotfiy API. Authentication can be done serverside in development envs, 
-    but the intent is to authenticate client-side
+    Class to interface the Spotfiy API. Authentication can be done server-side headless and in development envs.
+    
+    Main intent of the class is to be used with a refresh token stored in a database.
+
+    Fresh access tokens can be passed to the class as well - probably on instances of first authentication client-side
     """
         # loads the environment from a .env file
     from dotenv import load_dotenv
