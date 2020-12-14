@@ -5,3 +5,4 @@ __pycache__
 # keys and secrets
 .google/
 .env
+.cache-*

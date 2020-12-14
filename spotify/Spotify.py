@@ -1,6 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import base64
 
 class SpotifyClient:
     """
@@ -16,7 +17,7 @@ class SpotifyClient:
 
     def __init__(self, access_token=None, refresh_token=None):
 
-        self._scope = 'ugc-image-upload user-top-read playlist-modify-public playlist-read-public'
+        self._scope = 'ugc-image-upload user-top-read playlist-modify-public playlist-read-collaborative'
 
         # case where an access_token is passed directly in (first authentication, specific use cases maybe)
         if access_token:
@@ -29,7 +30,6 @@ class SpotifyClient:
             auth=SpotifyOAuth(
                 client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
                 client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
-                scope=self._scope
             )
             tokens = auth.refresh_access_token(refresh_token)
             self._spotify = spotipy.Spotify(auth=tokens['access_token'])
@@ -60,8 +60,59 @@ class SpotifyClient:
         """
         return self._spotify.current_user_top_artists()['items']
     
+    def get_playlist(self, id):
+        """
+        Get a playlist object based on it's id
+            :param id: the playlist id
+        
+        Returns the playlist object
+        """
+        return self._spotify.playlist(id)
+    
+    def create_playlist(self, name, img=None):
+        """
+        Create a playlist for the currently authenticated user
+            :param name: - Name of the playlist
+            :param img: - path to image of the playlist
+        
+        Returns the created playlist object
+        """
+        # create description
+        desc = '''Your daily mixtape of fresh music based on your horoscope for today.'''
+
+        # get the current user
+        user = self._spotify.current_user()
+
+        # create playlist
+        playlist = self._spotify.user_playlist_create(user=user['id'], name=name, description=desc)
+        
+        # if image url specified, add cover arts
+        if image:
+            # encode the image in base 64
+            with open(img, 'rb') as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+            self._spotify.playlist_upload_cover_image(playlist['id'], encoded_string)
+
+        return playlist
+    
     def get_recommendations(self, seeds, **parameters):
         """
         Get song recommendations based on seeds
+            :param seeds: - list of tracks, artists, or genres to seed the recommendation algorithm with
         """
         return self._spotify.recommendations()
+
+    def clear_playlist(self,id):
+        """
+        Clear out a playlist so that it doesn't have any tracks and is fresh.
+            :param id: The id of the playlist to clear out
+        """
+        return self._spotify.playlist_remove_all_occurrences_of_items(id, items=self._spotify.playlist_items(id))
+
+    def add_tracks_to_playlist(self, id, tracks):
+        """
+        Add tracks to a certain playlist given it's id
+            :param id: the id of the playlist ot add the tracks to
+            :param tracks: the tracks to add to the playlist
+        """
+        return self._spotify.playlist_add_items(id, tracks)
