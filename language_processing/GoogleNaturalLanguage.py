@@ -1,7 +1,8 @@
 # Imports the Google Cloud client library
 from google.cloud import language_v1
 
-class GoogleNaturalLanguage:
+
+class LanguageClient:
     """
     Class to interface the google natural language API
 
@@ -23,11 +24,12 @@ class GoogleNaturalLanguage:
 
         # Instantiates a client
         self._client = language_v1.LanguageServiceClient()
-    
-    def _create_document(self,text, type_=language_v1.Document.Type.PLAIN_TEXT, language='en'):
+
+    def _create_document(
+            self, text, type_=language_v1.Document.Type.PLAIN_TEXT, language='en'):
         """
         Create a document object to analyze with the client
-        
+
         :param text: - the text of the document - should be plain-text
         :param type_: the content type object taken from the language processing library.
                 -> Available types: PLAIN_TEXT, HTML
@@ -38,8 +40,8 @@ class GoogleNaturalLanguage:
         """
 
         return {"content": text, "type_": type_, "language": language}
-    
-    def get_sentiment(self,text):
+
+    def get_sentiment(self, text):
         """
         Analyze the sentiment of some text
 
@@ -49,4 +51,18 @@ class GoogleNaturalLanguage:
         encoding_type = language_v1.EncodingType.UTF8
 
         # Detects the sentiment of the text
-        return self._client.analyze_sentiment(request={'document': doc, 'encoding_type': encoding_type}).document_sentiment
+        return self._client.analyze_sentiment(
+            request={'document': doc, 'encoding_type': encoding_type}).document_sentiment
+    
+    def get_entities(self,text):
+        """
+        Analyze and extract the entities in a piece of text
+
+        :param text: - the text to analyze
+        """
+
+        doc = self._create_document(text)
+        encoding_type = language_v1.EncodingType.UTF8
+        
+        return self._client.analyze_entities(
+            request={'document': doc, 'encoding_type': encoding_type}).entities
