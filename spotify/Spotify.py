@@ -108,13 +108,13 @@ class SpotifyClient:
 
         return playlist
 
-    def get_recommendations(self, 
-                            seed_artists=None, 
+    def get_recommendations(self,
+                            seed_artists=None,
                             seed_tracks=None,
                             seed_genres=None,
                             limit=10,
                             parameters=None
-                           ):
+                            ):
         """
         Get song recommendations based on seeds
             :param seed_artists: - list of artists to seed the
@@ -127,14 +127,14 @@ class SpotifyClient:
             :param parameters: - any specific audio-feature goals
                                 using min_<attribute>, max_<attribute>,
                                 or target_<attribute> = <value>
-            
+
         """
         return self._spotify.recommendations(seed_artists=seed_artists,
                                              seed_tracks=seed_tracks,
                                              seed_genres=seed_genres,
                                              limit=limit,
                                              **parameters
-                                            )
+                                             )
 
     def clear_playlist(self, id):
         """

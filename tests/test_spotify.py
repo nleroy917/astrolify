@@ -13,17 +13,17 @@ class SpotifyTest(unittest.TestCase):
 
     cover_art_path = 'assets/coverart-test.png'
     test_uris = [
-        'spotify:track:7tFiyTwD0nx5a1eklYtX2J', # queen - bohemian rhapsody
-        'spotify:track:5ChkMS8OtdzJeqyybCc9R5', # mj - billie jean
-        'spotify:track:0VjIjW4GlUZAMYd2vXMi3b' # the weeknd - blinding lights
+        'spotify:track:7tFiyTwD0nx5a1eklYtX2J',  # queen - bohemian rhapsody
+        'spotify:track:5ChkMS8OtdzJeqyybCc9R5',  # mj - billie jean
+        'spotify:track:0VjIjW4GlUZAMYd2vXMi3b'  # the weeknd - blinding lights
     ]
 
     test_seed_tracks = [
-        'spotify:track:0VjIjW4GlUZAMYd2vXMi3b' # the weeknd - blinding lights
-        ]
+        'spotify:track:0VjIjW4GlUZAMYd2vXMi3b'  # the weeknd - blinding lights
+    ]
     test_seed_artists = [
-        'spotify:artist:1dfeR4HaWDbWqFHLkxsg1d' # queen
-        ]
+        'spotify:artist:1dfeR4HaWDbWqFHLkxsg1d'  # queen
+    ]
     test_seed_genres = ['pop']  # simple genre
 
     test_parameters = {
@@ -31,7 +31,6 @@ class SpotifyTest(unittest.TestCase):
         'max_danceability': 0.9,
         'min_liveness': 0.1,
     }
-
 
     @classmethod
     def setUpClass(self):
@@ -67,7 +66,7 @@ class SpotifyTest(unittest.TestCase):
         self.assertTrue('snapshot_id' in result)
         self.assertTrue((len(self._spclient.get_playlist(
             new_playlist['id'])['tracks']['items']) == 0))
-    
+
     def test_recommendations(self):
         # get recs based on test data
         result = self._spclient.get_recommendations(
@@ -77,4 +76,3 @@ class SpotifyTest(unittest.TestCase):
             seed_genres=self.test_seed_genres,
         )
         self.assertTrue(len(result['tracks']) > 0)
-
