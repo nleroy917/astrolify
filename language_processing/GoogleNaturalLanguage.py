@@ -1,7 +1,6 @@
 # Imports the Google Cloud client library
 from google.cloud import language_v1
 
-
 class LanguageClient:
     """
     Class to interface the google natural language API
@@ -53,11 +52,12 @@ class LanguageClient:
         encoding_type = language_v1.EncodingType.UTF8
 
         # Detects the sentiment of the text
-        return self._client.analyze_sentiment(
+        result = self._client.analyze_sentiment(
             request={
                 'document': doc,
                 'encoding_type': encoding_type
             }).document_sentiment
+        return result
 
     def get_entities(self, text):
         """

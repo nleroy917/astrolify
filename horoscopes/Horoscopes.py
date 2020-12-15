@@ -1,20 +1,10 @@
-class Sentiment:
-    """
-    simple sentiment object
-    """
-
-    def __init__(self, sentiment=None, magnitude=None):
-        self.sentiment = sentiment
-        self.magnitude = magnitude
-
-
 class Horoscope:
     """
     Horoscope class to store metadata about horoscopes
     """
 
     def __init__(self, date=None, content=None,
-                 type=None, sign=None, source=None):
+                 type=None, sign=None, source=None, sentiment=None):
         """
         Create a new horoscope class with the following properties:
             -> date - date of the horoscope
@@ -31,7 +21,7 @@ class Horoscope:
         self.sign = sign
         self.content = content
         self.source = source
-        self.sentiment = Sentiment()
+        self.sentiment = sentiment
 
     def show(self):
         """
