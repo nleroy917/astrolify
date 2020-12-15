@@ -78,7 +78,7 @@ class SpotifyTest(unittest.TestCase):
             seed_genres=self.test_seed_genres,
         )
         self.assertTrue(len(result['tracks']) > 0)
-    
+
     def test_search(self):
         # test search functionality
         result = self._spclient.search(self.test_query)

@@ -1,4 +1,4 @@
-from .Horoscopes import *
+from .Horoscopes import Horoscope
 import requests
 import urllib
 

@@ -57,22 +57,22 @@ class SpotifyClient:
             ))
             self._access_token = None
             self._refresh_token = None
-    
-    def search(self, 
-                query,
-                limit=10,
-                type='track'
-            ):
+
+    def search(self,
+               query,
+               limit=10,
+               type='track'
+               ):
         """
         Search spotify for items (Tracks, artists, etc)
             :param query: - the search query
             :param limit: - the number of items to return
             :param type: - the type of items to return
         """
-        return self._spotify.search(query, 
-                            limit=limit,
-                            type=type,
-                            )
+        return self._spotify.search(query,
+                                    limit=limit,
+                                    type=type,
+                                    )
 
     def current_user_top_tracks(self):
         """
@@ -158,7 +158,8 @@ class SpotifyClient:
             :param id: The id of the playlist to clear out
         """
         return self._spotify.playlist_remove_all_occurrences_of_items(
-            id, items=[item['track']['uri'] for item in self._spotify.playlist_items(id)['items']])
+            id, items=[item['track']['uri'] for item
+                       in self._spotify.playlist_items(id)['items']])
 
     def add_tracks_to_playlist(self, id, tracks):
         """
