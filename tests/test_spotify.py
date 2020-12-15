@@ -32,6 +32,8 @@ class SpotifyTest(unittest.TestCase):
         'min_liveness': 0.1,
     }
 
+    test_query = 'queen'
+
     @classmethod
     def setUpClass(self):
         """
@@ -76,3 +78,8 @@ class SpotifyTest(unittest.TestCase):
             seed_genres=self.test_seed_genres,
         )
         self.assertTrue(len(result['tracks']) > 0)
+    
+    def test_search(self):
+        # test search functionality
+        result = self._spclient.search(self.test_query)
+        self.assertTrue(len(result['tracks']['items']) > 0)
