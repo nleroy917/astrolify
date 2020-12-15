@@ -53,7 +53,7 @@ class Astrolify:
         else:
             print(
                 'No horoscope detected - obtaining today\'s '
-                 'horoscope for {}...'.format(self.zodiac))
+                'horoscope for {}...'.format(self.zodiac))
             self.horoscope = self._hclient.get_horoscope(self.zodiac, 'today')
             self._analyze_horoscope()
 
