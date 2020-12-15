@@ -1,6 +1,7 @@
 # python
 env/
 __pycache__
+*.pyc
 
 # keys and secrets
 .google/
