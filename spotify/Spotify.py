@@ -88,8 +88,8 @@ class SpotifyClient:
         Returns the created playlist object
         """
         # create description
-        desc = '''Your daily mixtape of fresh music based on your horoscope
-                  for today.'''
+        desc = "Your daily mixtape of fresh music based \
+                on your horoscope for today"
 
         # get the current user
         user = self._spotify.current_user()
@@ -108,13 +108,33 @@ class SpotifyClient:
 
         return playlist
 
-    def get_recommendations(self, seeds, **parameters):
+    def get_recommendations(self, 
+                            seed_artists=None, 
+                            seed_tracks=None,
+                            seed_genres=None,
+                            limit=10,
+                            parameters=None
+                           ):
         """
         Get song recommendations based on seeds
-            :param seeds: - list of tracks, artists, or genres to seed the
-            recommendation algorithm with
+            :param seed_artists: - list of artists to seed the
+                                   recommendation algorithm with
+            :param seed_tracks: - list of tracks to seed the
+                                  recommendation algorithm with
+            :param seed_genres: - list of genres to seed the
+                                  recommendation algorithm with
+            :param limit: - number of results to return
+            :param parameters: - any specific audio-feature goals
+                                using min_<attribute>, max_<attribute>,
+                                or target_<attribute> = <value>
+            
         """
-        return self._spotify.recommendations()
+        return self._spotify.recommendations(seed_artists=seed_artists,
+                                             seed_tracks=seed_tracks,
+                                             seed_genres=seed_genres,
+                                             limit=limit,
+                                             **parameters
+                                            )
 
     def clear_playlist(self, id):
         """
@@ -122,7 +142,7 @@ class SpotifyClient:
             :param id: The id of the playlist to clear out
         """
         return self._spotify.playlist_remove_all_occurrences_of_items(
-            id, items=self._spotify.playlist_items(id))
+            id, items=[item['track']['uri'] for item in self._spotify.playlist_items(id)['items']])
 
     def add_tracks_to_playlist(self, id, tracks):
         """
