@@ -72,7 +72,7 @@ class SpotifyClient:
         return self._spotify.search(query,
                                     limit=limit,
                                     type=type,
-                                    )
+                                    )[type + 's']['items']
 
     def current_user_top_tracks(self):
         """

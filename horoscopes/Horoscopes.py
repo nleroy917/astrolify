@@ -4,7 +4,8 @@ class Horoscope:
     """
 
     def __init__(self, date=None, content=None,
-                 type=None, sign=None, source=None, sentiment=None):
+                 type=None, sign=None, source=None,
+                 sentiment=None, entities=None):
         """
         Create a new horoscope class with the following properties:
             -> date - date of the horoscope
@@ -22,10 +23,4 @@ class Horoscope:
         self.content = content
         self.source = source
         self.sentiment = sentiment
-
-    def show(self):
-        """
-        Print the horoscope and it's contents to the command line
-        TODO
-        """
-        pass
+        self.entities = entities

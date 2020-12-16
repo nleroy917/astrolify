@@ -4,6 +4,8 @@ from language_processing.GoogleNaturalLanguage import LanguageClient
 
 from .Exceptions import AstrolifyException
 
+import random
+
 
 class Astrolify:
     """
@@ -70,8 +72,52 @@ class Astrolify:
         print("Analyzing horoscope...")
         # get the sentiment
         sentiment = self._gclient.get_sentiment(self.horoscope.content)
+        entities = self._gclient.get_entities(self.horoscope.content)
 
         self.horoscope.sentiment = sentiment
+        self.horoscope.entities = entities
+
+    def _get_key_words(self, limit=3):
+        """
+        Get key words from the entitites of the horoscope
+            :param limit: - amount to return
+        """
+        if not self.horoscope.entities:
+            raise AstrolifyException("No entities found - have you analyzed"
+                                     "the horoscope yet?")
+
+        key_words = [entity.name for entity in self.horoscope.entities[:limit]]
+        return key_words
+
+    def _search_spotify_for_key_words(self, key_words):
+        """
+        Search spotify based on the key_words that were found from the horoscope entities
+            :param key_words: - list of words to search for in spotify
+
+        returns a random track that contains a key-word
+        """
+        tracks = []
+        for word in key_words:
+            tracks.append(self._spclient.search(word, limit=1)[0])
+        uris = [track['uri'] for track in tracks]
+        return [random.choice([track['uri'] for track in tracks])]
+
+    def _get_top_seeds(self):
+        """
+        Get seeds for the recomednation algorithm based on a user's top tracks. This
+        function works by creating a list of uris for a users top tracks and top
+        artists currently, then creates a random sample from them
+        """
+        tracks = self._spclient.current_user_top_tracks()
+        track_uris = [track['uri'] for track in tracks]
+
+        artists = self._spclient.current_user_top_artists()
+        artist_uris = [artist['uri'] for artist in artists]
+
+        return {
+            'artist_uris': random.sample(artist_uris, 2),
+            'track_uris': random.sample(track_uris, 2)
+        }
 
     def date_to_zodiac(self, date):
         """
@@ -88,11 +134,41 @@ class Astrolify:
             if date_number <= z[0]:
                 return z[1]
 
-    def generate(self, limit=10):
+    def generate(self, limit=10, verbose=True):
         """
         Generate songs from the horoscope
             :param limit: - number of songs to generate
+            :param verbose: - display more detailed stats about algorithm
         """
+        if verbose:
+            print('Generating music based on horoscope...')
+
+        top_uris = self._get_top_seeds()
+        key_word_uris = self._search_spotify_for_key_words(self._get_key_words())
+
+        valence = (self.horoscope.sentiment.score + 1) / 2
+        if self.horoscope.sentiment.magnitude > 5:
+            magnitude = 5
+        else:
+            magnitude = self.horoscope.sentiment.magnitude
+        energy = magnitude / 5
+
+        print('target_valence: {}'.format(str(round(valence,2)).ljust(6)))
+        print('target_energy:  {}'.format(str(round(energy,2)).ljust(6)))
+
+        parameters = {
+            'target_valence': valence,
+            'target_energy': energy
+        }
+        recs = self._spclient.get_recommendations(
+                                                seed_artists=top_uris['artist_uris'],
+                                                seed_tracks=(
+                                                top_uris['track_uris'] + key_word_uris),
+                                                limit=10,
+                                                parameters=parameters
+                                                )
+
+        return recs['tracks']
 
     def __del__(self):
         pass
