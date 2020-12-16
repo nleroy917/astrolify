@@ -68,6 +68,9 @@ class SpotifyClient:
             :param query: - the search query
             :param limit: - the number of items to return
             :param type: - the type of items to return
+
+        Returns the items from the search (['items']
+        parameter)
         """
         return self._spotify.search(query,
                                     limit=limit,
@@ -175,7 +178,7 @@ class SpotifyClient:
             :param uris: - uris of tracks
         """
         return self._spotify.tracks(uris)['tracks']
-    
+
     def audio_features(self, uris):
         """
         Get the audio features for several tracks

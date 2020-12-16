@@ -82,4 +82,4 @@ class SpotifyTest(unittest.TestCase):
     def test_search(self):
         # test search functionality
         result = self._spclient.search(self.test_query)
-        self.assertTrue(len(result['tracks']['items']) > 0)
+        self.assertTrue(len(result) > 0)

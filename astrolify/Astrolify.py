@@ -93,7 +93,8 @@ class Astrolify:
 
     def _search_spotify_for_key_words(self, key_words, limit=10):
         """
-        Search spotify based on the key_words that were found from the horoscope entities
+        Search spotify based on the key_words that were found from the
+        horoscope entities.
             :param key_words: - list of words to search for in spotify
 
         returns a random track that contains a key-word
@@ -107,9 +108,10 @@ class Astrolify:
 
     def _get_top_seeds(self):
         """
-        Get seeds for the recomednation algorithm based on a user's top tracks. This
-        function works by creating a list of uris for a users top tracks and top
-        artists currently, then creates a random sample from them
+        Get seeds for the recomednation algorithm based on a user's top
+        tracks. This function works by creating a list of uris for a users
+        top tracks and top artists currently, then creates a random sample
+        from them.
         """
         tracks = self._spclient.current_user_top_tracks()
         track_uris = [track['uri'] for track in tracks]
@@ -136,7 +138,7 @@ class Astrolify:
         for z in zodiacs:
             if date_number <= z[0]:
                 return z[1]
-    
+
     def _filter_tracks_by_audio_features(self, uris, feature_targets, n=2):
         """
         Take a list of uris, retrieve their audio analysis from Spotify,
@@ -148,7 +150,7 @@ class Astrolify:
                                      for an audio feature {'feature': val, ...}
             :param n: - number of uris to return
         """
-        # ensure that 
+        # ensure that
         if len(uris) < n:
             raise AstrolifyException("Cannot return more uris than passed in!"
                                      " (n must be >= len(uris))")
@@ -160,7 +162,6 @@ class Astrolify:
         sse_store = {}
         for uri in uris:
             sse_store[uri] = 0
-        
 
         analysis_full = self._spclient.audio_features(uris)
         # loop through ecah analysis object
@@ -171,7 +172,7 @@ class Astrolify:
             for feature in feature_targets:
                 sse_store[analysis['uri']] += (analysis[feature] -
                                                feature_targets[feature])**2
-        
+
         sorted_uris = dict(sorted(sse_store.items(), key=lambda item: item[1]))
         sorted_uris_list = [uri for uri in sorted_uris]
         return sorted_uris_list[:n]
@@ -187,7 +188,8 @@ class Astrolify:
             print('Generating music based on horoscope...')
 
         top_uris = self._get_top_seeds()
-        key_word_uris = self._search_spotify_for_key_words(self._get_key_words(), limit=10)
+        key_word_uris = self._search_spotify_for_key_words(
+            self._get_key_words(), limit=10)
         key_word_uri = random.choice(key_word_uris)
 
         valence = (self.horoscope.sentiment.score + 1) / 2
@@ -197,31 +199,32 @@ class Astrolify:
             magnitude = self.horoscope.sentiment.magnitude
         energy = magnitude / 5
 
-        print('target_valence: {}'.format(str(round(valence,2)).ljust(6)))
-        print('target_energy:  {}'.format(str(round(energy,2)).ljust(6)))
+        print('target_valence: {}'.format(str(round(valence, 2)).ljust(6)))
+        print('target_energy:  {}'.format(str(round(energy, 2)).ljust(6)))
 
         parameters = {
             'target_valence': valence,
             'target_energy': energy
         }
         recs = self._spclient.get_recommendations(
-                                                seed_artists=top_uris['artist_uris'],
-                                                seed_tracks=(
-                                                top_uris['track_uris'] + [key_word_uri]),
-                                                limit=10,
-                                                parameters=parameters
-                                                )
+            seed_artists=top_uris['artist_uris'],
+            seed_tracks=(
+                top_uris['track_uris'] + [key_word_uri]),
+            limit=10,
+            parameters=parameters
+        )
         target_features = {
             'valence': valence,
             'energy': energy
         }
 
-        key_word_uris_targeted = self._filter_tracks_by_audio_features(key_word_uris, target_features)
+        key_word_uris_targeted = self._filter_tracks_by_audio_features(
+            key_word_uris, target_features)
         key_word_tracks = self._spclient.get_tracks(key_word_uris_targeted)
         all_tracks = recs['tracks'] + key_word_tracks
         random.shuffle(all_tracks)
         end = time.time()
-        print("Elapsed time: {} sec".format(round(end-start,2)))
+        print("Elapsed time: {} sec".format(round(end - start, 2)))
         return all_tracks
 
     def __del__(self):
