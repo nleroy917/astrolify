@@ -3,8 +3,10 @@ from horoscopes.Client import HoroscopeClient
 from language_processing.GoogleNaturalLanguage import LanguageClient
 
 from .Exceptions import AstrolifyException
+import warnings
 
 import random
+import time
 
 
 class Astrolify:
@@ -35,7 +37,7 @@ class Astrolify:
         """
 
         # assign birthday attribute and figure out zodiac sign
-        self._birthday = birthday
+        self.birthday = birthday
         self.zodiac = self.date_to_zodiac(birthday)
 
         # instantiate client objects
@@ -89,7 +91,7 @@ class Astrolify:
         key_words = [entity.name for entity in self.horoscope.entities[:limit]]
         return key_words
 
-    def _search_spotify_for_key_words(self, key_words):
+    def _search_spotify_for_key_words(self, key_words, limit=10):
         """
         Search spotify based on the key_words that were found from the horoscope entities
             :param key_words: - list of words to search for in spotify
@@ -98,9 +100,10 @@ class Astrolify:
         """
         tracks = []
         for word in key_words:
-            tracks.append(self._spclient.search(word, limit=1)[0])
+            tracks += self._spclient.search(word, limit=limit)
+
         uris = [track['uri'] for track in tracks]
-        return [random.choice([track['uri'] for track in tracks])]
+        return uris
 
     def _get_top_seeds(self):
         """
@@ -133,6 +136,45 @@ class Astrolify:
         for z in zodiacs:
             if date_number <= z[0]:
                 return z[1]
+    
+    def _filter_tracks_by_audio_features(self, uris, feature_targets, n=2):
+        """
+        Take a list of uris, retrieve their audio analysis from Spotify,
+        and then return the tracks that have the features closest to those
+        values. Utilizes a SSE approach and returns tracks with smallest
+        squared-error
+            :param uris: - Required. A list of uris
+            :param feature_targets: - Required. A dictionary of target values
+                                     for an audio feature {'feature': val, ...}
+            :param n: - number of uris to return
+        """
+        # ensure that 
+        if len(uris) < n:
+            raise AstrolifyException("Cannot return more uris than passed in!"
+                                     " (n must be >= len(uris))")
+        if len(uris) == n:
+            warnings.warn("Length of uris == n, no filtering is being done."
+                          "len(uris) < n")
+            return uris
+
+        sse_store = {}
+        for uri in uris:
+            sse_store[uri] = 0
+        
+
+        analysis_full = self._spclient.audio_features(uris)
+        # loop through ecah analysis object
+        # there will be one for each uri passed in
+        for analysis in analysis_full:
+            # loop through audio features to correct for
+            # calculate SSE
+            for feature in feature_targets:
+                sse_store[analysis['uri']] += (analysis[feature] -
+                                               feature_targets[feature])**2
+        
+        sorted_uris = dict(sorted(sse_store.items(), key=lambda item: item[1]))
+        sorted_uris_list = [uri for uri in sorted_uris]
+        return sorted_uris_list[:n]
 
     def generate(self, limit=10, verbose=True):
         """
@@ -140,11 +182,13 @@ class Astrolify:
             :param limit: - number of songs to generate
             :param verbose: - display more detailed stats about algorithm
         """
+        start = time.time()
         if verbose:
             print('Generating music based on horoscope...')
 
         top_uris = self._get_top_seeds()
-        key_word_uris = self._search_spotify_for_key_words(self._get_key_words())
+        key_word_uris = self._search_spotify_for_key_words(self._get_key_words(), limit=10)
+        key_word_uri = random.choice(key_word_uris)
 
         valence = (self.horoscope.sentiment.score + 1) / 2
         if self.horoscope.sentiment.magnitude > 5:
@@ -163,12 +207,22 @@ class Astrolify:
         recs = self._spclient.get_recommendations(
                                                 seed_artists=top_uris['artist_uris'],
                                                 seed_tracks=(
-                                                top_uris['track_uris'] + key_word_uris),
+                                                top_uris['track_uris'] + [key_word_uri]),
                                                 limit=10,
                                                 parameters=parameters
                                                 )
+        target_features = {
+            'valence': valence,
+            'energy': energy
+        }
 
-        return recs['tracks']
+        key_word_uris_targeted = self._filter_tracks_by_audio_features(key_word_uris, target_features)
+        key_word_tracks = self._spclient.get_tracks(key_word_uris_targeted)
+        all_tracks = recs['tracks'] + key_word_tracks
+        random.shuffle(all_tracks)
+        end = time.time()
+        print("Elapsed time: {} sec".format(round(end-start,2)))
+        return all_tracks
 
     def __del__(self):
         pass

@@ -168,3 +168,16 @@ class SpotifyClient:
             :param tracks: the tracks to add to the playlist
         """
         return self._spotify.playlist_add_items(id, tracks)
+
+    def get_tracks(self, uris):
+        """
+        Simple method to get track objects from a list or uris
+            :param uris: - uris of tracks
+        """
+        return self._spotify.tracks(uris)['tracks']
+    
+    def audio_features(self, uris):
+        """
+        Get the audio features for several tracks
+        """
+        return self._spotify.audio_features(tracks=uris)
