@@ -1,17 +1,37 @@
-from astrolify.Astrolify import Astrolify
-from google.cloud import language_v1
+from dotenv import load_dotenv
+import os
+import random
 
-PLAYLIST_ID = '1p1hAVQnIJA7IQGf43VS8e'
+load_dotenv()
+SPOTIFY_CLIENT_ID=os.getenv('SPOTIFY_CLIENT_ID')
+SPOTIFY_CLIENT_SECRET=os.getenv('SPOTIFY_CLIENT_SECRET')
+GOOGLE_APPLICATION_CREDENTIALS=os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
-app = Astrolify('9/17/1996')
-print(app.horoscope.content)
+# import custom modules
+from astrolify.Astrolify import Astrolify, AstrolifyException
+from spotify.Spotify import SpotifyClient
+from language_processing.GoogleNaturalLanguage import LanguageClient
+from horoscopes.Client import HoroscopeClient
+from horoscopes.Horoscopes import Horoscope
 
-print('-='*30)
-print(app.horoscope.sentiment, end='')
+# import flask
+from flask import Flask
+from flask import jsonify
+from flask import request
+from flask import render_template
+from flask_cors import CORS
+app = Flask(__name__)
+CORS(app)
 
-print('-='*30)
-print('Found entities: ')
-for entity in app.horoscope.entities:
-    print(entity.name.ljust(8), '-', str(entity.type_).ljust(8), '-', str(round(entity.salience, 2)).ljust(8))
+#import other necessary modules
+import json
+from dateutil import parser
 
-app.update_playlist(PLAYLIST_ID)
+# Testing route/main route
+@app.route('/')
+def api_base():
+    package = {
+        "message": "astrolify api",
+        "version": "0.0.1"
+    }
+	return jsonify(package)
