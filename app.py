@@ -25,7 +25,6 @@ CORS(app)
 
 #import other necessary modules
 import json
-from dateutil import parser
 
 # Testing route/main route
 @app.route('/')
@@ -34,4 +33,7 @@ def api_base():
         "message": "astrolify api",
         "version": "0.0.1"
     }
-	return jsonify(package)
+    return jsonify(package)
+
+if __name__ =='__main__':
+    app.run()
