@@ -4,4 +4,5 @@ from gcfns.core import PlaylistUpdater
 
 def update_playlist(request):
     pu = PlaylistUpdater()
-    pu.update()
+    status = pu.update()
+    return status
