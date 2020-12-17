@@ -1,0 +1,3 @@
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['functions', 'deploy', 'update-playlist', '--trigger-http', '--runtime', 'python38', '--entry-point', 'update_playlist']

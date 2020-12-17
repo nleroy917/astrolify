@@ -225,7 +225,28 @@ class Astrolify:
         random.shuffle(all_tracks)
         end = time.time()
         print("Elapsed time: {} sec".format(round(end - start, 2)))
+
         return all_tracks
+    
+    def update_playlist(self, id, track_uris=None):
+        """
+        Update the currently authenitcated users playlist with
+        tracks. These can be passed in or the app will auto-
+        generate.
+            :param id: the playlist id
+            :param track_uris: list of track uris/ids to add to the playlist
+        """
+        if not track_uris:
+            print("No tracks passed in, auto generating...")
+            tracks = self.generate()
+            track_uris = [track['uri'] for track in tracks]
+
+        # clear the playlist
+        self._spclient.clear_playlist(id)
+
+        # add tracks to the playlist
+        self._spclient.add_tracks_to_playlist(id, track_uris)
+        
 
     def __del__(self):
         pass
