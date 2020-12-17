@@ -9,3 +9,6 @@ class PlaylistUpdater():
 
     def update(self):
         print('Test')
+        return {
+            "message": 'Success'
+        }
