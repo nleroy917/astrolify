@@ -77,12 +77,14 @@ class Astrolify:
             # check if it's analyzed - analyze if not
             if not self.horoscope.sentiment or not self.horoscope.entities:
                 self._analyze_horoscope()
-        else:
+        elif not horoscope and not worker:
             print(
                 'No horoscope detected - obtaining today\'s '
                 'horoscope for {}...'.format(self.zodiac))
             self.horoscope = self._hclient.get_horoscope(self.zodiac, 'today')
             self._analyze_horoscope()
+        else:
+            print('Running as worker - skipping horoscope analysis')
 
     def _analyze_horoscope(self):
         """

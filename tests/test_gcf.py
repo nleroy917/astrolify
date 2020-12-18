@@ -20,6 +20,7 @@ class GCFTest(unittest.TestCase):
     TEST_PLAYLIST_ID = os.getenv("TEST_PLAYLIST_ID")
     TEST_ZODIAC = os.getenv("TEST_ZODIAC")
     UPDATE_PLAYLIST_GCF_ENDPOINT = os.getenv("UPDATE_PLAYLIST_GCF_ENDPOINT")
+    GOOGLE_IDENTITY_TOKEN = os.getenv("GOOGLE_IDENTITY_TOKEN")
     SPOTIPY_CACHE = ".cache-NLeRoy917"
 
     @classmethod
@@ -54,19 +55,19 @@ class GCFTest(unittest.TestCase):
             sp_refresh_token=self.SPOTIFY_TOKENS['refresh_token']
         )
 
-    def test_local_update(self):
-        target_valence = self._pu._score_to_valence(
-            self.horoscope.sentiment.score)
-        target_energy = self._pu._magnitude_to_energy(
-            self.horoscope.sentiment.magnitude)
-        targets = {
-            'valence': target_valence,
-            'energy': target_energy
-        }
-        entities = [{"name": entity.name}
-                    for entity in self.horoscope.entities]
-        data = self._pu.update(targets, entities)
-        self.assertTrue('snapshot_id' in data)
+    # def test_local_update(self):
+    #     target_valence = self._pu._score_to_valence(
+    #         self.horoscope.sentiment.score)
+    #     target_energy = self._pu._magnitude_to_energy(
+    #         self.horoscope.sentiment.magnitude)
+    #     targets = {
+    #         'valence': target_valence,
+    #         'energy': target_energy
+    #     }
+    #     entities = [{"name": entity.name}
+    #                 for entity in self.horoscope.entities]
+    #     data = self._pu.update(targets, entities)
+    #     self.assertTrue('snapshot_id' in data)
 
     def test_gcf_http(self):
         target_valence = self._pu._score_to_valence(
@@ -79,15 +80,15 @@ class GCFTest(unittest.TestCase):
         }
         entities = [{"name": entity.name}
                     for entity in self.horoscope.entities]
-        requests.post()
-        return_data = requests.post(
-            UPDATE_PLAYLIST_GCF_ENDPOINT,
-            json= {
+        return_data = requests.post(self.UPDATE_PLAYLIST_GCF_ENDPOINT, json={
                 "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
                 "playlist_id": self.TEST_PLAYLIST_ID,
                 "zodiac": self.TEST_ZODIAC,
                 "targets": targets,
                 "entities": entities
+            },
+            headers = {
+                'Authorization': 'bearer ' + self.GOOGLE_IDENTITY_TOKEN
             })
-
+        print(return_data.content)
         self.assertTrue("snapshot_id" in return_data)

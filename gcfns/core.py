@@ -4,8 +4,7 @@ class PlaylistUpdater(Astrolify):
     """
     Class to handle the ubdating of playlists
     """
-    def __init__(self, playlist_id, zodiac,
-                horoscope, sp_access_token=None, 
+    def __init__(self, playlist_id, zodiac, sp_access_token=None, 
               sp_refresh_token=None
             ):
         # assign the playlist_id
@@ -26,7 +25,6 @@ class PlaylistUpdater(Astrolify):
         # also, for the playlist updater we MUST pass in a horoscope
         Astrolify.__init__(self,
                     zodiac=zodiac,
-                    horoscope=horoscope,
                     sp_access_token=sp_access_token, 
                     sp_refresh_token=sp_refresh_token,
                     worker=True
