@@ -117,7 +117,7 @@ class Astrolify:
         # be passed as json() data in the request body.
         if entities:
             key_words = [entity["name"] for entity in entities]
-        
+
         # other-wise we need to check if the horoscope
         # has already been analyzed and has entities
         elif not self.horoscope.entities:
@@ -125,7 +125,8 @@ class Astrolify:
                                      "the horoscope yet?")
         # generate key words
         else:
-            key_words = [entity.name for entity in self.horoscope.entities[:limit]]
+            key_words = [
+                entity.name for entity in self.horoscope.entities[:limit]]
         return key_words
 
     def _search_spotify_for_key_words(self, key_words, limit=10):
@@ -219,7 +220,7 @@ class Astrolify:
         Quick method to convert a sentiment score to a target valence
         """
         return (score + 1) / 2
-    
+
     def _magnitude_to_energy(self, magnitude):
         """
         Quick method to convert magnitude to energy
@@ -262,7 +263,7 @@ class Astrolify:
                 access_token=sp_access_token,
                 refresh_token=sp_refresh_token
             )
-        
+
         # start timer
         start = time.time()
 
@@ -291,7 +292,8 @@ class Astrolify:
         # else use the internal horoscope
         else:
             valence = self._score_to_valence(self.horoscope.sentiment.score)
-            energy = self._magnitude_to_energy(self.horoscope.sentiment.magnitude)
+            energy = self._magnitude_to_energy(
+                self.horoscope.sentiment.magnitude)
 
         if verbose:
             print('target_valence: {}'.format(str(round(valence, 2)).ljust(6)))
@@ -303,7 +305,7 @@ class Astrolify:
             'target_energy': energy
         }
 
-        # generate recs based on targets and 
+        # generate recs based on targets and
         recs = self._spclient.get_recommendations(
             seed_artists=top_uris['artist_uris'],
             seed_tracks=(
@@ -321,7 +323,7 @@ class Astrolify:
         # the target values
         key_word_uris_targeted = self._filter_tracks_by_audio_features(
             key_word_uris, target_features)
-        
+
         # get them from spotify
         key_word_tracks = self._spclient.get_tracks(key_word_uris_targeted)
 
