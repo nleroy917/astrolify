@@ -55,7 +55,6 @@ class GCFTest(unittest.TestCase):
         )
 
     def test_local_update(self):
-
         target_valence = self._pu._score_to_valence(
             self.horoscope.sentiment.score)
         target_energy = self._pu._magnitude_to_energy(
@@ -69,11 +68,25 @@ class GCFTest(unittest.TestCase):
         data = self._pu.update(targets, entities)
         self.assertTrue('snapshot_id' in data)
 
-    # def test_gcf_http(self):
-    #     return_data = requests.post(
-    #             UPDATE_PLAYLIST_GCF_ENDPOINT,
-    #             param: {
-    #                 "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
-    #                 "playlist_id": self.TEST_PLAYLIST_ID,
-    #                 "zodiac":
-    #             })
+    def test_gcf_http(self):
+        target_valence = self._pu._score_to_valence(
+            self.horoscope.sentiment.score)
+        target_energy = self._pu._magnitude_to_energy(
+            self.horoscope.sentiment.magnitude)
+        targets = {
+            'valence': target_valence,
+            'energy': target_energy
+        }
+        entities = [{"name": entity.name}
+                    for entity in self.horoscope.entities]
+        return_data = requests.post(
+                UPDATE_PLAYLIST_GCF_ENDPOINT,
+                param: {
+                    "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
+                    "playlist_id": self.TEST_PLAYLIST_ID,
+                    "zodiac": self.TEST_ZODIAC,
+                    "targets": targets,
+                    "entities": entities
+                })
+        
+        self.assertTrue("snapshot_id" in return_data)

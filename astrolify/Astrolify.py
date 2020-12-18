@@ -229,7 +229,6 @@ class Astrolify:
         # this is totally arbitrary and can be changed
         if magnitude > 5:
             magnitude = 5
-
         return magnitude / 5
 
     def generate(self, entities=None, targets=None, limit=10, verbose=True,
@@ -301,8 +300,8 @@ class Astrolify:
 
         # set params
         parameters = {
-            'target_valence': valence,
-            'target_energy': energy
+            'target_valence': round(valence, 2),
+            'target_energy': round(energy, 2)
         }
 
         # generate recs based on targets and
