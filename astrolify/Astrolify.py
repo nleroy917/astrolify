@@ -15,14 +15,17 @@ class Astrolify:
     """
 
     def __init__(self,
-                 birthday,
+                 birthday=None,
+                 zodiac=None,
                  sp_access_token=None,
                  sp_refresh_token=None,
-                 horoscope=None
+                 horoscope=None,
+                 worker=False
                  ):
         """
         Create a new instance of the Astrolify class
-            :param birthday: - the birthday to deterine zodiac sign
+            :param birthday: - the birthday to determine zodiac sign
+            :param zodiac: - if passed in doesnt try to determine from birthday
             :param sp_access_token: optional. a valid access
                                     token for the spotify oAuth
                                     flow.
@@ -34,16 +37,33 @@ class Astrolify:
                               analyzed. This is future proofing to optimize
                               server code for generation of a lot of songs
                               that will all use the same horoscope.
+            :param worker: a boolean value to tell the class if it's being
+                           used as a worker to crunch playlists. The main
+                           difference being that it skips spotify
+                           authentication on intialization and saves it for
+                           on-the-fly spin ups of the SpotifyClient class
         """
+        # check either birthday or zodiac was passed in
+        if not birthday and not zodiac:
+            raise AstrolifyException("Must initialize object with a birthday "
+                                     "or a zodiac sign.")
 
-        # assign birthday attribute and figure out zodiac sign
-        self.birthday = birthday
-        self.zodiac = self.date_to_zodiac(birthday)
+        if birthday:
+            # assign birthday attribute and figure out zodiac sign
+            self.birthday = birthday
+            self.zodiac = self.date_to_zodiac(birthday)
+        else:
+            # otherwise directly assign zodiac
+            self.zodiac = zodiac
 
-        # instantiate client objects
-        self._spclient = SpotifyClient(access_token=sp_access_token,
-                                       refresh_token=sp_refresh_token
-                                       )
+        self._worker = worker
+        if worker:
+            self._spclient = None
+        else:
+            # instantiate client objects
+            self._spclient = SpotifyClient(access_token=sp_access_token,
+                                           refresh_token=sp_refresh_token
+                                           )
         self._hclient = HoroscopeClient()
         self._gclient = LanguageClient()
 
@@ -54,6 +74,9 @@ class Astrolify:
         # astrolify class
         if horoscope:
             self.horoscope = horoscope
+            # check if it's analyzed - analyze if not
+            if not self.horoscope.sentiment or not self.horoscope.entities:
+                self._analyze_horoscope()
         else:
             print(
                 'No horoscope detected - obtaining today\'s '
@@ -79,16 +102,30 @@ class Astrolify:
         self.horoscope.sentiment = sentiment
         self.horoscope.entities = entities
 
-    def _get_key_words(self, limit=3):
+    def _get_key_words(self, limit=3, entities=None):
         """
         Get key words from the entitites of the horoscope
             :param limit: - amount to return
+            :param entities: - (Optional) Can pass in custom
+                               horoscope entitie values. Must be a
+                               list of dicts that have a "name"
+                               key.
         """
-        if not self.horoscope.entities:
+        # check for entities already passed in. This
+        # is most likely going to be used for hte GCF
+        # spin ups when a dictionary of entities will
+        # be passed as json() data in the request body.
+        if entities:
+            key_words = [entity["name"] for entity in entities]
+        
+        # other-wise we need to check if the horoscope
+        # has already been analyzed and has entities
+        elif not self.horoscope.entities:
             raise AstrolifyException("No entities found - have you analyzed"
                                      "the horoscope yet?")
-
-        key_words = [entity.name for entity in self.horoscope.entities[:limit]]
+        # generate key words
+        else:
+            key_words = [entity.name for entity in self.horoscope.entities[:limit]]
         return key_words
 
     def _search_spotify_for_key_words(self, key_words, limit=10):
@@ -177,35 +214,96 @@ class Astrolify:
         sorted_uris_list = [uri for uri in sorted_uris]
         return sorted_uris_list[:n]
 
-    def generate(self, limit=10, verbose=True):
+    def _score_to_valence(self, score):
+        """
+        Quick method to convert a sentiment score to a target valence
+        """
+        return (score + 1) / 2
+    
+    def _magnitude_to_energy(self, magnitude):
+        """
+        Quick method to convert magnitude to energy
+        """
+        # floor to max value
+        # this is totally arbitrary and can be changed
+        if magnitude > 5:
+            magnitude = 5
+
+        return magnitude / 5
+
+    def generate(self, entities=None, targets=None, limit=10, verbose=True,
+                 sp_access_token=None, sp_refresh_token=None):
         """
         Generate songs from the horoscope
             :param limit: - number of songs to generate
             :param verbose: - display more detailed stats about algorithm
+            :param entities: - you can override the horoscope entities
+                                by passing in your own. They must be a
+                                list of dicts with at least a "name"
+                                key/attribute
+            :param targets: - you can override the target value calculation
+                             by passing in your own. This needs to be a dict
+                             with "valence" and "energy" keys.
         """
+        if self._worker:
+            # check that proper tokens were supplied since running
+            # as a worker class instance
+            if (not sp_refresh_token and not sp_refresh_token) and \
+                    (not self.sp_refresh_token and not self.sp_access_token):
+
+                raise AstrolifyException("If running Astrolify as worker, "
+                                         "a valid Spotify access token OR "
+                                         "refresh token MUST be supplied to "
+                                         "generate track uris")
+
+            # self-assign the spotify client on the fly for whatever user's
+            # access token is being supplied
+            self._spclient = SpotifyClient(
+                access_token=sp_access_token,
+                refresh_token=sp_refresh_token
+            )
+        
+        # start timer
         start = time.time()
+
+        # print info
         if verbose:
             print('Generating music based on horoscope...')
 
+        # get the currnetly authenticaed users
+        # top track and artist uris
         top_uris = self._get_top_seeds()
+
+        # get uris for the entities
+        # these can be passed in to override the
+        # built-in horoscope entities - most likely
+        # in the case of GCF calling where entities
+        # are coming in as an object in the request
+        # body.
         key_word_uris = self._search_spotify_for_key_words(
-            self._get_key_words(), limit=10)
+            self._get_key_words(entities=entities), limit=10)
         key_word_uri = random.choice(key_word_uris)
 
-        valence = (self.horoscope.sentiment.score + 1) / 2
-        if self.horoscope.sentiment.magnitude > 5:
-            magnitude = 5
+        # if targets are supplied - use those
+        if targets:
+            valence = targets['valence']
+            energy = targets['energy']
+        # else use the internal horoscope
         else:
-            magnitude = self.horoscope.sentiment.magnitude
-        energy = magnitude / 5
+            valence = self._score_to_valence(self.horoscope.sentiment.score)
+            energy = self._magnitude_to_energy(self.horoscope.sentiment.magnitude)
 
-        print('target_valence: {}'.format(str(round(valence, 2)).ljust(6)))
-        print('target_energy:  {}'.format(str(round(energy, 2)).ljust(6)))
+        if verbose:
+            print('target_valence: {}'.format(str(round(valence, 2)).ljust(6)))
+            print('target_energy:  {}'.format(str(round(energy, 2)).ljust(6)))
 
+        # set params
         parameters = {
             'target_valence': valence,
             'target_energy': energy
         }
+
+        # generate recs based on targets and 
         recs = self._spclient.get_recommendations(
             seed_artists=top_uris['artist_uris'],
             seed_tracks=(
@@ -218,16 +316,30 @@ class Astrolify:
             'energy': energy
         }
 
+        # generate the tracks that are random
+        # but filter them by those that are closest to
+        # the target values
         key_word_uris_targeted = self._filter_tracks_by_audio_features(
             key_word_uris, target_features)
+        
+        # get them from spotify
         key_word_tracks = self._spclient.get_tracks(key_word_uris_targeted)
+
+        # create a full tracks list
         all_tracks = recs['tracks'] + key_word_tracks
+
+        # shuffle them for UX
         random.shuffle(all_tracks)
+
+        # stop timer
         end = time.time()
-        print("Elapsed time: {} sec".format(round(end - start, 2)))
+
+        # info
+        if verbose:
+            print("Elapsed time: {} sec".format(round(end - start, 2)))
 
         return all_tracks
-    
+
     def update_playlist(self, id, track_uris=None):
         """
         Update the currently authenitcated users playlist with
@@ -245,9 +357,8 @@ class Astrolify:
         self._spclient.clear_playlist(id)
 
         # add tracks to the playlist
-        self._spclient.add_tracks_to_playlist(id, track_uris)
-        
+        snapshot = self._spclient.add_tracks_to_playlist(id, track_uris)
+        return snapshot
 
     def __del__(self):
         pass
-
