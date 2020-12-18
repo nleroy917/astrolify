@@ -79,14 +79,15 @@ class GCFTest(unittest.TestCase):
         }
         entities = [{"name": entity.name}
                     for entity in self.horoscope.entities]
+        requests.post()
         return_data = requests.post(
-                UPDATE_PLAYLIST_GCF_ENDPOINT,
-                param: {
-                    "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
-                    "playlist_id": self.TEST_PLAYLIST_ID,
-                    "zodiac": self.TEST_ZODIAC,
-                    "targets": targets,
-                    "entities": entities
-                })
-        
+            UPDATE_PLAYLIST_GCF_ENDPOINT,
+            json= {
+                "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
+                "playlist_id": self.TEST_PLAYLIST_ID,
+                "zodiac": self.TEST_ZODIAC,
+                "targets": targets,
+                "entities": entities
+            })
+
         self.assertTrue("snapshot_id" in return_data)
