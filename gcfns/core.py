@@ -46,6 +46,7 @@ class PlaylistUpdater(Astrolify):
                                         for the user
         """
         tracks = self.generate(targets=targets, entities=entities)
+        print('Generated {} tracks'.format(tracks))
         uris = [track['uri'] for track in tracks]
         data = self.update_playlist(self._playlist_id, track_uris=uris)
         return {

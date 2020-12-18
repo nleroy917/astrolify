@@ -50,7 +50,6 @@ class GCFTest(unittest.TestCase):
         self._pu = PlaylistUpdater(
             self.TEST_PLAYLIST_ID,
             self.TEST_ZODIAC,
-            self.horoscope,
             sp_access_token=self.SPOTIFY_TOKENS['access_token'],
             sp_refresh_token=self.SPOTIFY_TOKENS['refresh_token']
         )
@@ -80,6 +79,7 @@ class GCFTest(unittest.TestCase):
         }
         entities = [{"name": entity.name}
                     for entity in self.horoscope.entities]
+
         return_data = requests.post(self.UPDATE_PLAYLIST_GCF_ENDPOINT, json={
                 "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
                 "playlist_id": self.TEST_PLAYLIST_ID,

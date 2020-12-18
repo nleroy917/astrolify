@@ -356,6 +356,7 @@ class Astrolify:
             tracks = self.generate()
             track_uris = [track['uri'] for track in tracks]
 
+        print("Updating...")
         # clear the playlist
         self._spclient.clear_playlist(id)
 
