@@ -20,7 +20,6 @@ class SpotifyClient:
     load_dotenv()
 
     def __init__(self, access_token=None, refresh_token=None):
-
         self._scope = '''ugc-image-upload
                          user-top-read
                          playlist-modify-public
@@ -30,6 +29,7 @@ class SpotifyClient:
         # case where an access_token is passed directly in (first
         # authentication, specific use cases maybe)
         if access_token:
+            print("Authenticating Spotify with access token")
             self._spotify = spotipy.Spotify(auth=access_token)
             self._access_token = access_token
             self._refresh_token = None
@@ -37,6 +37,7 @@ class SpotifyClient:
         # typical use - refresh_token taken from a database and used to create
         # a new access_token
         elif refresh_token:
+            print("Authenticating Spotify with refresh token")
             auth = SpotifyOAuth(
                 client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
                 client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
@@ -49,6 +50,7 @@ class SpotifyClient:
         # local and development environments
         # wont work headless server-side as it requires a user to log in
         else:
+            print("Authenticating with local auth-flow")
             self._spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(
                 client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
                 client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
