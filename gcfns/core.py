@@ -5,7 +5,7 @@ class PlaylistUpdater(Astrolify):
     Class to handle the ubdating of playlists
     """
     def __init__(self, playlist_id, zodiac, sp_access_token=None, 
-              sp_refresh_token=None, worker=True
+              sp_refresh_token=None
             ):
 
         # check that at least and access_token or refresh token were supplied 
@@ -19,6 +19,7 @@ class PlaylistUpdater(Astrolify):
             sp_refresh_token=sp_refresh_token,
             worker=True
           )
+        
         # assign the playlist_id
         self._playlist_id = playlist_id
 

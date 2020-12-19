@@ -60,8 +60,6 @@ class Astrolify:
             # otherwise directly assign zodiac
             self.zodiac = zodiac
 
-        self._worker = worker
-
         if not sp_access_token and not sp_refresh_token and worker:
             raise AstrolifyException("Must provide either an access token or refresh token "
                                     "when running astroliy as a worker."
@@ -253,23 +251,6 @@ class Astrolify:
                              by passing in your own. This needs to be a dict
                              with "valence" and "energy" keys.
         """
-        # if self._worker:
-        #     # check that proper tokens were supplied since running
-        #     # as a worker class instance
-        #     if (not sp_refresh_token and not sp_refresh_token) and \
-        #             (not self.sp_refresh_token and not self.sp_access_token):
-
-        #         raise AstrolifyException("If running Astrolify as worker, "
-        #                                  "a valid Spotify access token OR "
-        #                                  "refresh token MUST be supplied to "
-        #                                  "generate track uris")
-
-        #     # self-assign the spotify client on the fly for whatever user's
-        #     # access token is being supplied
-        #     self._spclient = SpotifyClient(
-        #         access_token=sp_access_token,
-        #         refresh_token=sp_refresh_token
-        #     )
 
         # start timer
         start = time.time()

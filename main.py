@@ -14,7 +14,7 @@ def update_playlist(request):
     targets = data['targets']
     entities = data['entities']
 
-    updater = PlaylistUpdater(playlist_id, zodiac, {}, sp_refresh_token=sp_refresh_token)
+    updater = PlaylistUpdater(playlist_id, zodiac, sp_refresh_token=sp_refresh_token)
     return_message = updater.update(targets, entities)
 
     return return_message

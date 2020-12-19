@@ -1,0 +1,31 @@
+.centerX {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.centerY {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 1;
+}
+
+.centerXY {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .centerY {
+        align-items: center;
+    }
+  }

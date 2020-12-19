@@ -1,0 +1,53 @@
+.buttonSmall {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 0px;
+    background: white;
+    border: black solid 1px;
+    color: black;
+    border-radius: 10px;
+}
+
+.buttonMedium {
+    padding: 15px;
+    margin: 10px;
+    border-radius: 0px;
+    background: white;
+    border: black solid 1px;
+    color: black;
+    font-size: medium;
+    border-radius: 10px;
+}
+
+.buttonLarge {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin: 10px;
+    border-radius: 0px;
+    background: white;
+    border: black solid 1px;
+    color: black;
+    font-size: large;
+    border-radius: 10px;
+}
+
+.buttonLarge:hover, .buttonMedium:hover, .buttonSmall:hover {
+    background: black;
+    color: white;
+    border: solid white 1px;
+    transition: ease 0.15s;
+}
+
+.buttonLarge:focus, .buttonMedium:focus, .buttonSmall:focus {
+   outline: none;
+}
+
+.buttonLarge:active, .buttonMedium:active, .buttonSmall:active {
+    outline: none;
+    color: rgb(155, 155, 155);
+    border: rgb(155, 155, 155) solid 1px;
+    transition: ease 0.2s;
+
+}
