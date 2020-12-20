@@ -35,9 +35,11 @@
     margin-right: 5px;
     text-decoration: none;
     transition: all ease 0.1s;
+    border-bottom: black solid 1px;
 }
 
 .navListItem:hover {
-    color: #ff4154;
+    border-bottom: rgb(250, 76, 76) solid 1px;
     cursor: pointer;
+    transition: ease 0.15s;
 }

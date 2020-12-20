@@ -4,18 +4,18 @@ import Nav from './Nav';
 
 import styles from '../../styles/Layout.module.css';
 
-const Layout = ({ children, seo }) => (
+const Layout = ({ children, seo }) => {
+  console.log(seo)
+  return(
   <>
     <SEO 
-      title={seo.title}
+      title={seo.title || "Music From Your Horoscope"}
     />
-    <header>
-      <Nav />
-    </header>
     <main className={styles.main}>
       { children }
     </main>
   </>
-);
+  )
+  };
 
 export default Layout;

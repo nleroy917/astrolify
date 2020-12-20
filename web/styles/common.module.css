@@ -24,6 +24,25 @@
     justify-content: center;
 }
 
+.paper {
+    background: rgb(255, 255, 255);
+    border-radius: 5px;
+    padding: 25px;
+    color: black;
+}
+
+.formInput {
+    width: 100%;
+    height: 30px;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.formInput:focus {
+    outline-color: rgb(250, 76, 76);
+}
+
 @media (max-width: 768px) {
     .centerY {
         align-items: center;
