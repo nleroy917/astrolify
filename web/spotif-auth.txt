@@ -1,0 +1,18 @@
+        getTokens(CLIENT_ID, CLIENT_SECRET, code, REDIRECT_URI).then((tokens) =>{
+            console.log(tokens)
+            setAccessToken(tokens.access_token)
+            setRefreshToken(tokens.refresh_token)
+            cookies.set('refreshToken', tokens.refresh_token,{path: '/', expires: new Date(Date.now()+ tokens.expires_in*3600)})
+            cookies.set('accessToken', tokens.access_token,{ path: '/', expires: new Date(Date.now()+ tokens.expires_in*3600)})
+          }
+
+          // env
+const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
+const CLIENT_SECRET = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI
+
+import Cookies from 'universal-cookie';
+const cookies = new Cookies()
+
+// helpers
+import { getTokens } from '../utils/spotify';

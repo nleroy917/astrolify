@@ -1,0 +1,51 @@
+.invertedButtonSmall {
+    padding: 10px;
+    margin: 10px;
+    margin: 10px;
+    background: black;
+    border: white solid 1px;
+    color: white;
+    font-size: small;
+    border-radius: 10px;
+}
+
+.invertedButtonMedium {
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: black;
+    border: white solid 1px;
+    color: white;
+    font-size: medium;
+    border-radius: 10px;
+}
+
+.invertedButtonLarge {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin: 10px;
+    background: black;
+    border: white solid 1px;
+    color: white;
+    font-size: large;
+    border-radius: 10px;
+}
+
+.invertedButtonSmall:hover, .invertedButtonMedium:hover, .invertedButtonLarge:hover {
+    background: white;
+    color: black;
+    border: solid white 1px;
+    transition: ease 0.15s;
+}
+.invertedButtonSmall:focus, .invertedButtonMedium:focus, .invertedButtonLarge:focus {
+    outline: none;
+}
+.invertedButtonSmall:active, .invertedButtonMedium:active, .invertedButtonLarge:active {
+    outline: none;
+    color: rgb(155, 155, 155);
+    border: rgb(155, 155, 155) solid 1px;
+    transition: ease 0.2s;
+}

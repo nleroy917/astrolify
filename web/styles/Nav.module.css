@@ -39,7 +39,7 @@
 }
 
 .navListItem:hover {
-    border-bottom: rgb(250, 76, 76) solid 1px;
+    text-decoration: underline rgb(250, 76, 76) solid 2px;
     cursor: pointer;
     transition: ease 0.15s;
 }

@@ -4,15 +4,16 @@ import Nav from './Nav';
 
 import styles from '../../styles/Layout.module.css';
 
-const Layout = ({ children, seo }) => {
-  console.log(seo)
+const Layout = (props) => {
   return(
   <>
     <SEO 
-      title={seo.title || "Music From Your Horoscope"}
+      title={props.seo.title || "Music From Your Horoscope"}
     />
-    <main className={styles.main}>
-      { children }
+    <main>
+     <div {...props} className={styles.main}>
+      { props.children }
+     </div>
     </main>
   </>
   )

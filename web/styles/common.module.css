@@ -1,3 +1,7 @@
+.starryNight {
+    background: black url('https://thumbs.gfycat.com/FeistyJaggedBuffalo-size_restricted.gif') repeat;
+    min-height: 100vh;
+}
 .centerX {
     display: flex;
     flex-direction: row;

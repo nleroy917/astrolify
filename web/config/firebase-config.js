@@ -1,5 +1,5 @@
 export const firebaseConfig = {
-    apiKey: "AIzaSyDLQiqcRQ2bN1dntCadF2YcQtNB51T4NNs",
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     authDomain: "astrolify.firebaseapp.com",
     projectId: "astrolify",
     storageBucket: "astrolify.appspot.com",

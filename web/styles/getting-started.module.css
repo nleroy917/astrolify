@@ -1,0 +1,47 @@
+.starryNight {
+    background: black url('https://thumbs.gfycat.com/FeistyJaggedBuffalo-size_restricted.gif') repeat;
+    min-height: 100vh;
+}
+
+.landingText {
+    font-size: 64px;
+    margin-bottom: 0px;
+}
+.landingSubText {
+    font-size: 24px;
+    font-weight: 200;
+}
+
+.textLink {
+    font-size: 16px;
+    font-weight: 200;
+}
+.textLink:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.buttonWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .buttonWrapper {
+        flex-direction: column;
+    }
+    .landingText {
+        font-size: 50px;
+        text-align: center;
+    }
+    .landingSubText {
+      font-size: 22px;
+      text-align: center;
+    }
+
+    .starryNight {
+        min-height: 100vh;
+    }
+}

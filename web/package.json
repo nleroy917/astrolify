@@ -10,6 +10,7 @@
   "dependencies": {
     "@haiku/nleroy917-bigdipper": "^0.0.1",
     "@react-firebase/auth": "^0.2.10",
+    "axios": "^0.21.0",
     "classnames": "^2.2.6",
     "firebase": "^8.2.1",
     "next": "10.0.3",
@@ -18,7 +19,8 @@
     "react-dom": "17.0.1",
     "react-hook-form": "^6.13.1",
     "react-router-dom": "^5.2.0",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
     "eslint": "^7.16.0",

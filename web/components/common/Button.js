@@ -1,7 +1,7 @@
 import styles from '../../styles/Button.module.css'
 var classNames = require('classnames');
 
-const Button = ({size, children, onClick}) => {
+const Button = (props) => {
     const buttonClasses ={
         small: styles.buttonSmall,
         medium: styles.buttonMedium,
@@ -9,10 +9,10 @@ const Button = ({size, children, onClick}) => {
     }
     return (
         <button
-         className={buttonClasses[size]}
-         onClick={onClick}
+         {...props}
+         className={buttonClasses[props.size]}
         >
-        { children}
+        { props.children}
         </button>
     )
 }
