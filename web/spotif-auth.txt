@@ -9,7 +9,7 @@
           // env
 const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
 const CLIENT_SECRET = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET
-const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REGISTER_REDIRECT_URI
 
 import Cookies from 'universal-cookie';
 const cookies = new Cookies()

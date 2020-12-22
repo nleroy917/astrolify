@@ -60,6 +60,12 @@ class SpotifyClient:
             self._access_token = None
             self._refresh_token = None
 
+    def current_user(self):
+        """
+        Simply get the currently authenticated user
+        """
+        return self._spotify.current_user()
+        
     def search(self,
                query,
                limit=10,

@@ -1,7 +1,7 @@
 .input {
     font: inherit;
     color: inherit;
-    border: solid 2px grey;
+    border: solid 2px white;
     height: 1.5em;
     margin: 2px;
     display: block;
@@ -12,6 +12,8 @@
     letter-spacing: inherit;
     border-radius: 5px;
     transition: all ease-in-out 0.05s;
+    text-align: center;
+    font-weight: 200;
 }
 
 .input:focus {
