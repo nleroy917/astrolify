@@ -20,6 +20,10 @@ from language_processing.GoogleNaturalLanguage import LanguageClient
 from horoscopes.Client import HoroscopeClient
 from horoscopes.Horoscopes import Horoscope
 
+#import fireabse
+import firebase_admin
+from firebase_admin import auth
+
 # import flask
 from flask import Flask
 from flask import jsonify
@@ -28,17 +32,22 @@ from flask import render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-CORS(app)
-
 # import db models
 from postgres.models import *
 
 #import other necessary modules
 import json
+
+# init flask
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
+CORS(app)
+
+# init firebase
+if not len(firebase_admin._apps):
+    fb_app = firebase_admin.initialize_app()
 
 # Testing route/main route
 @app.route('/')
@@ -49,34 +58,19 @@ def api_base():
     }
     return jsonify(package)
 
-@app.route('/users', methods=['GET', 'POST'])
+@app.route('/users', methods=['GET'])
 def all_users():
     if request.method == 'GET':
         results = User.query.all()
         users = [user.serialize for user in results]
         return jsonify(users)
-    elif request.method == 'POST':
-        """
-        Create new user
-        """
-        data = request.json
-        new_user = User(
-            id = 'test1234',
-            display_name = 'test-user-rox',
-            email = 'test@tester.com',
-            birthday = date.today(),
-            name = 'test user',
-            playlist_id = '1234',
-            spotify_access_token = '1234',
-            spotify_refresh_token = '1234',
-            zodiac = 'virgo',
-            account_created = date.today()
-        )
-        db.session.add(new_user)
-        return jsonify({
-            'status': 'success',
-            'user': new_user.serialize
-        })
+
+@app.route('/playlists', methods=['GET'])
+def all_playlists():
+    if request.method == 'GET':
+        results = Playlist.query.all()
+        playlists = [playlist.serialize for playlist in results]
+        return jsonify(playlists)
 
 @app.route('/auth/register', methods=['POST'])
 def register_user():
@@ -98,20 +92,67 @@ def register_user():
         5.) Create custom token with Firebase-SDK
         6.) Send token back to client for them to log in
     """
+    # get data and init OAuth flow object
     data = request.json
     oauth = OAuth2(
         SPOTIFY_CLIENT_ID,
         SPOTIFY_CLIENT_SECRET,
         REGISTER_REDIRECT
     )
-    
+    # extract birthday and get spotify tokens
+    birthday = data['birthday'].split('-')
     tokens = oauth.get_tokens(data['code'])
-    sp = SpotifyClient(access_token=tokens['access_token'])
-    user = sp.current_user()
 
+    # init Astrolify object + spotify client
+    ast = Astrolify(
+        zodiac=data['zodiac'],
+        sp_access_token=tokens['access_token']
+    )
+    sp = SpotifyClient(access_token=tokens['access_token'])
+
+    # get user, create platlist and update it with music
+    user = sp.current_user()
+    playlist = sp.create_playlist('Astrolify', img='./assets/coverart-test.png')
+    snapshot = ast.update_playlist(playlist['id'])
+    
+    # insert new playlist and new user into system
+    new_playlist = Playlist(
+        playlist_id = playlist['id'],
+        owner = user['id'],
+        snapshot_id = snapshot['snapshot_id'],
+        link = playlist['external_urls']['spotify'],
+        name = playlist['name']
+    )
+
+    new_user = User(
+        id = user['id'],
+        display_name = user['display_name'],
+        email = user['email'],
+        birthday = date(
+            int(birthday[0]), int(birthday[1]), int(birthday[2])
+        ),
+        name = data['name'],
+        playlist_id = '1234',
+        spotify_access_token = tokens['access_token'],
+        spotify_refresh_token = tokens['refresh_token'],
+        zodiac = data['zodiac'],
+        account_created = date.today()
+    )
+
+    # insert and commit
+    db.session.add(new_playlist)
+    db.session.add(new_user)
+    db.session.commit()
+
+    # create token to sign in
+    fb_token = auth.create_custom_token(user['id'])
+
+    # return
     return jsonify({
         'status': 'success',
-        'user': user
+        'user': user,
+        'playlist': playlist,
+        'fb_token': fb_token.decode('utf-8')
     })
 
 

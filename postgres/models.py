@@ -39,5 +39,15 @@ class Playlist(db.Model):
     snapshot_id = db.Column(db.String(120))
     link = db.Column(db.String(120))
     name = db.Column(db.String(80))
+
+    @property
+    def serialize(self):
+        return {
+            'playlist_id': self.playlist_id,
+            'owner': self.owner,
+            'snapshot_id': self.snapshot_id,
+            'link': self.link,
+            'name': self.name
+        }
     def __repr__(self):
         return '<Playlist %r>' % self.playlist_id

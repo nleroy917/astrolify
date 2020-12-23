@@ -6,6 +6,7 @@ import styled from 'styled-components';
 // layout
 import Layout from '../components/layout/Layout';
 import Input from '../components/common/Input';
+import Button from '../components/common/Button';
 
 // import state, forms, routing
 import { useRouter } from 'next/router';
@@ -14,7 +15,11 @@ import { useState, useEffect } from 'react'
 // import firebase
 import firebase from "firebase/app";
 import "firebase/auth";
-import Button from '../components/common/Button';
+
+import axios from 'axios';
+import { birthday_to_zodiac } from '../utils/zodiac';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
 const SectionOne = (props) => {
   return(
@@ -99,6 +104,7 @@ const SectionThree = (props) => {
     <>
      <div className={styles.innerWrapper}>
       <h1>Welcome {props.name}</h1>
+      <h4>{`I heard ${props.zodiac}'s are ugly.`}</h4>
       <div style={{display: 'flex', flexDirection:'row'}}>
         <button 
           className={styles.submitButton}
@@ -108,7 +114,7 @@ const SectionThree = (props) => {
         </button>
         <button 
           className={styles.submitButton}
-          onClick={()=>props.setFormStep(3)}
+          onClick={()=>props.onSubmit()}
         >
           Lets go
         </button>
@@ -119,25 +125,51 @@ const SectionThree = (props) => {
   )
 }
 
-const SignUp = ({code}) => {
+const SignUp = ({code, error}) => {
     const router = useRouter()
     const [formStep, setFormStep] = useState(1);
     const [month, setMonth] = useState("")
     const [day, setDay] = useState("")
     const [year, setYear] = useState("")
     const [name, setName] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleRegistration = async () => {
+        setLoading(true)
         let payload = {
           'name': name,
           'birthday': `${year}-${month}-${day}`,
-          'code': code
+          'code': code,
+          'zodiac': birthday_to_zodiac(parseInt(month), parseInt(day))
         }
+        try {
+          let res = await axios.post(`${API_BASE}/auth/register`, payload)
+          if (res.status === 200){
+            setLoading(false)
+            let data = await res.data
+            console.log(data)
+            firebase.auth().signInWithCustomToken(data.fb_token)
+            .then(user => {
+              console.log(user)
+              router.push('/')
+            })
+            .catch((error) => {
+              var errorCode = error.code;
+              var errorMessage = error.message;
+            });
+            
+          }
+        } catch(error) {
+            alert(error)
+        }
+
     }
 
     // get access and refresh tokens
     useEffect(() => {
-      //console.log(code)
+      if(error === 'access_denied'){
+        router.push('/')
+      }
     }, [])
     
     return (
@@ -160,7 +192,7 @@ const SignUp = ({code}) => {
              style={{background: 'none'}}
              className={commonstyles.paper}
            >
-           {
+          {
                formStep === 1 
              ? <SectionOne 
                  name={name}
@@ -181,6 +213,8 @@ const SignUp = ({code}) => {
              ? <SectionThree 
                   name={name}
                   setFormStep={setFormStep}
+                  onSubmit={handleRegistration}
+                  zodiac={birthday_to_zodiac(parseInt(month), parseInt(day))}
                 />
              : <div></div>
            }
@@ -195,7 +229,8 @@ const SignUp = ({code}) => {
 
 SignUp.getInitialProps = async ({ query }) => {
   const { code } = query
-  return { code }
+  const { error } = query
+  return { code, error }
 }
 
 export default SignUp

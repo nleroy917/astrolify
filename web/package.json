@@ -10,7 +10,7 @@
   "dependencies": {
     "@haiku/nleroy917-bigdipper": "^0.0.1",
     "@react-firebase/auth": "^0.2.10",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "firebase": "^8.2.1",
     "next": "10.0.3",

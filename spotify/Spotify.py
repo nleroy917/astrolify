@@ -22,6 +22,7 @@ class SpotifyClient:
     def __init__(self, access_token=None, refresh_token=None):
         self._scope = '''ugc-image-upload
                          user-top-read
+                         user-email-read
                          playlist-modify-public
                          playlist-read-collaborative
                       '''
@@ -65,7 +66,7 @@ class SpotifyClient:
         Simply get the currently authenticated user
         """
         return self._spotify.current_user()
-        
+
     def search(self,
                query,
                limit=10,

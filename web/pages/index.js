@@ -10,7 +10,7 @@ export default function App() {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     setLoaded(firebase.auth())
-    console.log(loaded)
+    //console.log(loaded)
   }, [loaded])
   return(
     <>
