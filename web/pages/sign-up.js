@@ -5,8 +5,7 @@ import styled from 'styled-components';
 
 // layout
 import Layout from '../components/layout/Layout';
-import Input from '../components/common/Input';
-import Button from '../components/common/Button';
+import {SectionOne, SectionTwo, SectionThree, SectionFour} from '../components/sign-up-form/sign-up-form';
 
 // import state, forms, routing
 import { useRouter } from 'next/router';
@@ -21,117 +20,16 @@ import { birthday_to_zodiac } from '../utils/zodiac';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
-const SectionOne = (props) => {
-  return(
-    <>
-   <div className={styles.innerWrapper}>
-      <h1 style={{textAlign: 'center', fontSize:'36px', marginBottom: '0px'}}>What is your name?</h1>
-    <div className={styles.dateWrapper}>
-    <Input
-      style={{width: 250, fontSize: '22px'}}
-      value={props.name}
-      onChange={(e)=>props.setName(e.target.value)} 
-      label="Name"
-      onKeyDown={(e)=>{
-        if(e.keyCode === 13){
-          props.setFormStep(2)
-        }
-      }}
-    />
-    </div>
-    <button 
-      className={styles.submitButton}
-      onClick={()=>props.setFormStep(2)}
-    >
-      Next
-    </button>
-    </div>
-    </>
-  )
-}
-
-const SectionTwo = (props) => {
-  return(
-    <>
-    <div className={styles.innerWrapper}>
-      <h1 style={{textAlign: 'center'}}>When is your birthday?</h1>
-    <div className={styles.dateWrapper}>
-    <Input
-      style={{width: 50, fontSize: '22px'}}
-      value={props.month}
-      onChange={(e)=>props.setMonth(e.target.value)} 
-      label="Month"
-    />
-    <Input
-      style={{width: 50, fontSize: '22px'}}
-      value={props.day}
-      onChange={(e)=>props.setDay(e.target.value)} 
-      label="Day"
-    />
-    <Input
-      style={{width: 100, fontSize: '22px'}}
-      value={props.year}
-      onChange={(e)=>props.setYear(e.target.value)} 
-      label="Year"
-      onKeyDown={(e)=>{
-        if(e.keyCode === 13){
-          props.setFormStep(3)
-        }
-      }}
-    />
-    </div>
-    <div style={{display: 'flex', flexDirection:'row'}}>
-    <button 
-      className={styles.submitButton}
-      onClick={()=>props.setFormStep(1)}
-    >
-      Back
-    </button>
-    <button 
-      className={styles.submitButton}
-      onClick={()=>props.setFormStep(3)}
-    >
-      Next
-    </button>
-    </div>
-    </div>
-    </>
-  )
-}
-
-const SectionThree = (props) => {
-  return (
-    <>
-     <div className={styles.innerWrapper}>
-      <h1>Welcome {props.name}</h1>
-      <h4>{`I heard ${props.zodiac}'s are ugly.`}</h4>
-      <div style={{display: 'flex', flexDirection:'row'}}>
-        <button 
-          className={styles.submitButton}
-          onClick={()=>props.setFormStep(2)}
-        >
-          Back
-        </button>
-        <button 
-          className={styles.submitButton}
-          onClick={()=>props.onSubmit()}
-        >
-          Lets go
-        </button>
-        </div>
-     </div>
-     
-    </>
-  )
-}
-
 const SignUp = ({code, error}) => {
     const router = useRouter()
+    const [pageError, setPageError] = useState(null);
     const [formStep, setFormStep] = useState(1);
     const [month, setMonth] = useState("")
     const [day, setDay] = useState("")
     const [year, setYear] = useState("")
     const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
 
     const handleRegistration = async () => {
@@ -150,7 +48,7 @@ const SignUp = ({code, error}) => {
             console.log(data)
             firebase.auth().signInWithCustomToken(data.fb_token)
             .then(user => {
-              console.log(user)
+              console.log('Signed in with custom token')
               router.push('/')
             })
             .catch((error) => {
@@ -160,15 +58,20 @@ const SignUp = ({code, error}) => {
             
           }
         } catch(error) {
+          console.log(error)
             alert(error)
         }
 
     }
-
     // get access and refresh tokens
     useEffect(() => {
       if(error === 'access_denied'){
         router.push('/')
+      }
+      if(!code) {
+        setPageError({
+          message: 'Please authorize Spotify first'
+        })
       }
     }, [])
     
@@ -192,8 +95,10 @@ const SignUp = ({code, error}) => {
              style={{background: 'none'}}
              className={commonstyles.paper}
            >
-          {
-               formStep === 1 
+            {
+            pageError
+            ? <div style={{color: 'white'}}>{pageError.message}</div>
+            :  formStep === 1 
              ? <SectionOne 
                  name={name}
                  setName={setName}
@@ -212,9 +117,16 @@ const SignUp = ({code, error}) => {
              : formStep === 3
              ? <SectionThree 
                   name={name}
+                  email={email}
+                  setEmail={setEmail}
+                  password={password}
+                  setPassword={setPassword}
                   setFormStep={setFormStep}
-                  onSubmit={handleRegistration}
                   zodiac={birthday_to_zodiac(parseInt(month), parseInt(day))}
+                />
+             : formStep === 4
+             ? <SectionFour
+                  setFormStep={setFormStep}
                 />
              : <div></div>
            }

@@ -6,6 +6,9 @@ import Button from '../components/common/Button';
 import Nav from '../components/layout/Nav';
 import InvertedButton from '../components/common/InvertedButton';
 
+import {useRouter} from 'next/router';
+import { useEffect, useState } from 'react';
+
 const querystring = require('querystring');
 const base_url =  'https://accounts.spotify.com/authorize?'
 const payload = {
@@ -13,12 +16,9 @@ const payload = {
 	response_type: 'code',
 	scope: process.env.NEXT_PUBLIC_SPOTIFY_SCOPE,
 	redirect_uri: process.env.NEXT_PUBLIC_REGISTER_REDIRECT_URI,
-	show_dialog: true
+	show_dialog: false
 }
 const authorize_url = base_url + querystring.stringify(payload)
-
-import {useRouter} from 'next/router';
-import { useEffect, useState } from 'react';
 
 const SpotifyLogo = styled.img`
   height: 20px;

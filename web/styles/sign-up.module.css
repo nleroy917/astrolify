@@ -12,12 +12,6 @@
     min-height: 500px;;
 }
 
-@media (max-width: 768px) {
-    .signUpFormWrapper {
-        width: 80vw;
-    }
-}
-
 .submitButton {
     padding: 10px;
     font-size: 18px;
@@ -60,4 +54,33 @@
     justify-content: center;
     align-items: center;
     color: white;
+}
+
+.formSectionTitle {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 0px;
+}
+
+.formSectionSubTitle {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 0px;
+    font-weight: 300;
+}
+
+@media (max-width: 768px) {
+    .signUpFormWrapper {
+        width: 80vw;
+    }
+    .formSectionTitle {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+    .formSectionSubTitle {
+        text-align: center;
+        font-size: 22px;
+        margin-bottom: 12px;
+    }
 }

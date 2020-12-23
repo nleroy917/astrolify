@@ -10,17 +10,6 @@ import InvertedButton from '../components/common/InvertedButton';
 
 import { useRouter } from 'next/router';
 
-const querystring = require('querystring');
-const base_url =  'https://accounts.spotify.com/authorize?'
-const payload = {
-	client_id: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
-	response_type: 'code',
-	scope: process.env.NEXT_PUBLIC_SPOTIFY_SCOPE,
-	redirect_uri: process.env.NEXT_PUBLIC_REGISTER_REDIRECT_URI,
-	show_dialog: true
-}
-const authorize_url = base_url + querystring.stringify(payload)
-
 export default function Home() {
   const router = useRouter()
   return (

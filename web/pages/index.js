@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
 
-import { FirebaseAuthConsumer, IfFirebaseAuthed, IfFirebaseUnAuthed } from '@react-firebase/auth';
+import { FirebaseAuthConsumer } from '@react-firebase/auth';
 import firebase from "firebase/app";
 import "firebase/auth";
 
 import Home from './home';
 
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
+
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
-    setLoaded(firebase.auth())
-    //console.log(loaded)
-  }, [loaded])
+    console.log(user)
+    setUser(firebase.auth().currentUser)
+  }, [user])
   return(
     <>
-    { loaded ? 
     <>
         <FirebaseAuthConsumer>
         {({ isSignedIn, user, providerId }) => {
@@ -24,7 +25,7 @@ export default function App() {
                 {JSON.stringify({ isSignedIn, user, providerId }, null, 2)}
                 <button
                 onClick={()=>{firebase.auth().signOut()}}
-              >
+                >
                 Sign Out
               </button>
               </div>
@@ -34,8 +35,6 @@ export default function App() {
           }}
         </FirebaseAuthConsumer>
       </>
-    :
-    <div>Loading...</div>}
     </>
   )
 }

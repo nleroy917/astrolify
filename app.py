@@ -20,9 +20,12 @@ from language_processing.GoogleNaturalLanguage import LanguageClient
 from horoscopes.Client import HoroscopeClient
 from horoscopes.Horoscopes import Horoscope
 
-#import fireabse
+#import fireabse and init
 import firebase_admin
-from firebase_admin import auth
+from firebase_admin import credentials, auth
+cred = credentials.Certificate(".google/astrolify-b7774d0fa3b8.json")
+if not firebase_admin._apps:
+    fb_app = firebase_admin.initialize_app(cred)
 
 # import flask
 from flask import Flask
@@ -44,10 +47,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 CORS(app)
-
-# init firebase
-if not len(firebase_admin._apps):
-    fb_app = firebase_admin.initialize_app()
 
 # Testing route/main route
 @app.route('/')
@@ -142,7 +141,12 @@ def register_user():
     # insert and commit
     db.session.add(new_playlist)
     db.session.add(new_user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        print('Error in commit, rolling back db')
+        db.session.rollback()
+
 
     # create token to sign in
     fb_token = auth.create_custom_token(user['id'])
