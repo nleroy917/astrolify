@@ -108,7 +108,10 @@ export const SectionOne = (props) => {
           </button>
           <button 
             className={styles.submitButton}
-            onClick={()=>props.onSubmit()}
+            onClick={()=>{
+                props.onSubmit()
+                props.setFormStep(0)
+             }}
           >
             Register
           </button>

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 // layout
 import Layout from '../components/layout/Layout';
 import {SectionOne, SectionTwo, SectionThree, SectionFour} from '../components/sign-up-form/sign-up-form';
+import Loader from 'react-loader-spinner';
 
 // import state, forms, routing
 import { useRouter } from 'next/router';
@@ -63,7 +64,7 @@ const SignUp = ({code, error}) => {
           alert(`Error! ${errorMessage}`)
         })
     }
-    // get access and refresh tokens
+
     useEffect(() => {
       if(error === 'access_denied'){
         router.push('/')
@@ -86,12 +87,15 @@ const SignUp = ({code, error}) => {
          <div className={styles.signUpContainer}>
           <div className={styles.signUpFormWrapper}>
           <div>
+          {
+            loading ? '' :
            <p 
              className={styles.backLink} 
              onClick={()=>router.push('/')}
            > 
              Go Home
            </p>
+          }
            </div>
            <div
              style={{background: 'none'}}
@@ -128,7 +132,16 @@ const SignUp = ({code, error}) => {
                   onSubmit={handleRegistration}
                 />
              : loading
-             ? <div>Getting things ready for you...</div>
+             ? <div className={styles.loadingContainer}>
+                 <div>Getting things ready for you...</div>
+                 <Loader 
+                   type="RevolvingDot"
+                   color="#FFF"
+                   height={100}
+                   width={100}
+                   style={{margin: '30px'}}
+                />
+                </div>
              : <div></div>
            }
           </div>
