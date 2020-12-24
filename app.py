@@ -64,6 +64,25 @@ def all_users():
         users = [user.serialize for user in results]
         return jsonify(users)
 
+@app.route('/users/<uid>', methods=['GET', 'POST'])
+def get_user(uid):
+    if request.method == 'GET':
+        headers = request.headers
+        id_token = headers['Identity-Token']
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+        except Exception as e:
+            return jsonify({
+                'message': str(e)
+            }), 401
+        uid = decoded_token['uid']
+        user = User.query.get(uid)
+        playlist = Playlist.query.get(user.playlist_id)
+        return jsonify({
+            'user': user.serialize,
+            'playlist': playlist.serialize
+        })
+
 @app.route('/playlists', methods=['GET'])
 def all_playlists():
     if request.method == 'GET':
