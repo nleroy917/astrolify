@@ -93,6 +93,8 @@ def register_user():
     """
     # get data and init OAuth flow object
     data = request.json
+    firebase_user = data['user']['user']
+
     oauth = OAuth2(
         SPOTIFY_CLIENT_ID,
         SPOTIFY_CLIENT_SECRET,
@@ -110,28 +112,30 @@ def register_user():
     sp = SpotifyClient(access_token=tokens['access_token'])
 
     # get user, create platlist and update it with music
-    user = sp.current_user()
+    spotify_user = sp.current_user()
     playlist = sp.create_playlist('Astrolify', img='./assets/coverart-test.png')
     snapshot = ast.update_playlist(playlist['id'])
     
     # insert new playlist and new user into system
     new_playlist = Playlist(
         playlist_id = playlist['id'],
-        owner = user['id'],
+        owner_spotify_id = spotify_user['id'],
+        owner_firebase_id = firebase_user['uid'],
         snapshot_id = snapshot['snapshot_id'],
         link = playlist['external_urls']['spotify'],
         name = playlist['name']
     )
 
     new_user = User(
-        id = user['id'],
-        display_name = user['display_name'],
-        email = user['email'],
+        spotify_id = spotify_user['id'],
+        firebase_id = firebase_user['uid'],
+        display_name = spotify_user['display_name'],
+        email = spotify_user['email'],
         birthday = date(
             int(birthday[0]), int(birthday[1]), int(birthday[2])
         ),
         name = data['name'],
-        playlist_id = '1234',
+        playlist_id = playlist['id'],
         spotify_access_token = tokens['access_token'],
         spotify_refresh_token = tokens['refresh_token'],
         zodiac = data['zodiac'],
@@ -147,16 +151,12 @@ def register_user():
         print('Error in commit, rolling back db')
         db.session.rollback()
 
-
-    # create token to sign in
-    fb_token = auth.create_custom_token(user['id'])
-
     # return
     return jsonify({
         'status': 'success',
-        'user': user,
+        'spotify_user': spotify_user,
+        'firebase_user': firebase_user,
         'playlist': playlist,
-        'fb_token': fb_token.decode('utf-8')
     })
 
 

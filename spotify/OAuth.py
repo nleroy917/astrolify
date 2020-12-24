@@ -1,9 +1,11 @@
 from spotipy.oauth2 import SpotifyOAuth
 
+
 class OAuth2():
     """
-    Simple class to help go through the OAuth handshake serverside. It leverages
-    the spotipy OAuth class already - no need to reinvent the wheel right?
+    Simple class to help go through the OAuth handshake serverside. It
+    leverages the spotipy OAuth class already - no need to reinvent
+    the wheel right?
     """
 
     def __init__(self, client_id, client_secret, redirect_uri):
@@ -15,7 +17,7 @@ class OAuth2():
             client_secret=client_secret,
             redirect_uri=redirect_uri
         )
-    
+
     def get_tokens(self, code):
         """
         Exchange the authorization code for access tokens
@@ -25,7 +27,3 @@ class OAuth2():
             as_dict=True,
             check_cache=False
         )
-
-    
-    
-

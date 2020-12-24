@@ -108,9 +108,9 @@ export const SectionOne = (props) => {
           </button>
           <button 
             className={styles.submitButton}
-            onClick={()=>props.setFormStep(4)}
+            onClick={()=>props.onSubmit()}
           >
-            Next
+            Register
           </button>
           </div>
        </div>

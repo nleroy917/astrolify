@@ -3,7 +3,8 @@ from app import db
 # User model
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.String(80), primary_key=True)
+    firebase_id =db.Column(db.String(80), primary_key=True)
+    spotify_id = db.Column(db.String(80))
     display_name = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True)
     birthday = db.Column(db.DateTime, nullable=False)
@@ -17,7 +18,8 @@ class User(db.Model):
     @property
     def serialize(self):
         return {
-            'id': self.id,
+            'firebase_id': self.firebase_id,
+            'spotify_id': self.spotify_id,
             'display_name': self.display_name,
             'email': self.email,
             'birthday': self.birthday,
@@ -35,7 +37,8 @@ class User(db.Model):
 class Playlist(db.Model):
     __tablename__ = 'playlists'
     playlist_id = db.Column(db.String(80), primary_key=True)
-    owner = db.Column(db.String(80))
+    owner_spotify_id = db.Column(db.String(80))
+    owner_firebase_id = db.Column(db.String(80))
     snapshot_id = db.Column(db.String(120))
     link = db.Column(db.String(120))
     name = db.Column(db.String(80))
@@ -44,7 +47,8 @@ class Playlist(db.Model):
     def serialize(self):
         return {
             'playlist_id': self.playlist_id,
-            'owner': self.owner,
+            'owner_spotify_id': self.owner_spotify_id,
+            'owner_firebase_id': self.owner_firebase_id,
             'snapshot_id': self.snapshot_id,
             'link': self.link,
             'name': self.name

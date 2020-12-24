@@ -61,9 +61,10 @@ class Astrolify:
             self.zodiac = zodiac
 
         if not sp_access_token and not sp_refresh_token and worker:
-            raise AstrolifyException("Must provide either an access token or refresh token "
-                                    "when running astroliy as a worker."
-                                    )
+            raise AstrolifyException("Must provide either an access token or "
+                                     "refresh token "
+                                     "when running astroliy as a worker."
+                                     )
         # instantiate client objects
         self._spclient = SpotifyClient(access_token=sp_access_token,
                                        refresh_token=sp_refresh_token

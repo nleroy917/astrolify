@@ -34,34 +34,34 @@ const SignUp = ({code, error}) => {
 
     const handleRegistration = async () => {
         setLoading(true)
-        let payload = {
-          'name': name,
-          'birthday': `${year}-${month}-${day}`,
-          'code': code,
-          'zodiac': birthday_to_zodiac(parseInt(month), parseInt(day))
-        }
-        try {
-          let res = await axios.post(`${API_BASE}/auth/register`, payload)
-          if (res.status === 200){
-            setLoading(false)
-            let data = await res.data
-            console.log(data)
-            firebase.auth().signInWithCustomToken(data.fb_token)
-            .then(user => {
-              console.log('Signed in with custom token')
-              router.push('/')
-            })
-            .catch((error) => {
-              var errorCode = error.code;
-              var errorMessage = error.message;
-            });
-            
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then( async (user) =>{
+          let payload = {
+            'name': name,
+            'birthday': `${year}-${month}-${day}`,
+            'code': code,
+            'zodiac': birthday_to_zodiac(parseInt(month), parseInt(day)),
+            'user': user
           }
-        } catch(error) {
-          console.log(error)
-            alert(error)
-        }
-
+          try {
+            let res = await axios.post(`${API_BASE}/auth/register`, payload)
+            if (res.status === 200){
+              setLoading(false)
+              let data = await res.data
+              console.log(data)
+              setLoading(false)
+              router.push('/profile')
+            }
+          } catch(error) {
+            console.log(error)
+              alert(error)
+          }
+        })
+        .catch(error=>{
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(`Error! ${errorMessage}`)
+        })
     }
     // get access and refresh tokens
     useEffect(() => {
@@ -85,12 +85,14 @@ const SignUp = ({code, error}) => {
         >
          <div className={styles.signUpContainer}>
           <div className={styles.signUpFormWrapper}>
+          <div>
            <p 
              className={styles.backLink} 
              onClick={()=>router.push('/')}
            > 
-           Back
+             Go Home
            </p>
+           </div>
            <div
              style={{background: 'none'}}
              className={commonstyles.paper}
@@ -123,11 +125,10 @@ const SignUp = ({code, error}) => {
                   setPassword={setPassword}
                   setFormStep={setFormStep}
                   zodiac={birthday_to_zodiac(parseInt(month), parseInt(day))}
+                  onSubmit={handleRegistration}
                 />
-             : formStep === 4
-             ? <SectionFour
-                  setFormStep={setFormStep}
-                />
+             : loading
+             ? <div>Getting things ready for you...</div>
              : <div></div>
            }
           </div>

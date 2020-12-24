@@ -80,14 +80,14 @@ class GCFTest(unittest.TestCase):
                     for entity in self.horoscope.entities]
 
         res = requests.post(self.UPDATE_PLAYLIST_GCF_ENDPOINT, json={
-                "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
-                "playlist_id": self.TEST_PLAYLIST_ID,
-                "zodiac": self.TEST_ZODIAC,
-                "targets": targets,
-                "entities": entities
-            },
-            headers = {
+            "sp_refresh_token": self.SPOTIFY_TOKENS['refresh_token'],
+            "playlist_id": self.TEST_PLAYLIST_ID,
+            "zodiac": self.TEST_ZODIAC,
+            "targets": targets,
+            "entities": entities
+        },
+            headers={
                 'Authorization': 'bearer ' + self.GOOGLE_IDENTITY_TOKEN
-            })
+        })
         data = res.json()
         self.assertTrue("snapshot_id" in data)
