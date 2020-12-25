@@ -11,6 +11,7 @@ import Layout from '../components/layout/Layout';
 import ProfileNav from '../components/layout/ProfileNav';
 import { fetchHoroscope } from '../utils/zodiac';
 import { generateGreeting} from '../config/greetings';
+import { fetchSpotifyData } from '../utils/spotify';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
@@ -28,14 +29,22 @@ const Profile = () => {
           'identity_token': idToken
         }
         try {
-        let res = await axios.get(`${API_BASE}/users/${user.uid}`, {headers: hdrs})
-        if(res.status === 200) {
-          let data = res.data
-          setProfile(data.user)
-          setPlaylist(data.playlist)
-          setLoading(false)
-          fetchHoroscope(data.user.zodiac)
-          .then(horoscope=>setHoroscope(horoscope))
+          // call server to get user's profile
+          let res = await axios.get(`${API_BASE}/users/${user.uid}`, {headers: hdrs})
+
+          // if sucess - proceed
+          if(res.status === 200) {
+            let data = res.data
+            setProfile(data.user)
+            setPlaylist(data.playlist)
+            fetchHoroscope(data.user.zodiac)
+              .then(horoscope=>setHoroscope(horoscope))
+            setLoading(false)
+            fetchSpotifyData(data.user.spotify_refresh_token, data.playlist.playlist_id)
+              .then(playlist_data=>{
+                console.log(playlist_data.body.tracks)
+                setPlaylist({...playlist_data, tracks: playlist_data.body.tracks})
+              })
         }
       } catch(error) {
         alert(error)
@@ -43,6 +52,7 @@ const Profile = () => {
 
       }).catch(function(error) {
         // Handle error
+        alert(error)
       });
     }
 
@@ -71,7 +81,21 @@ const Profile = () => {
                 </div>
                 <div className={styles.innerWrapper}>
                   <div className={styles.horoscopeAnalysisWrapper}></div>
-                  <div className={styles.playlistWrapper}></div>
+                  <div className={styles.playlistWrapper}>
+                    <ul>
+                    {
+                      playlist.tracks 
+                    ? playlist.tracks.items.map((track_obj,i) =>{
+                        return (
+                        <li key={i}>
+                          {`${track_obj.track.name} - ${track_obj.track.artists[0].name}`}
+                        </li>
+                        )
+                        }) 
+                    : 'Loading playlist...'
+                    }
+                    </ul>
+                  </div>
                 </div>
               </Layout>
               : <div>Fetching Profile</div>
