@@ -57,12 +57,12 @@ def api_base():
     }
     return jsonify(package)
 
-@app.route('/users', methods=['GET'])
-def all_users():
-    if request.method == 'GET':
-        results = User.query.all()
-        users = [user.serialize for user in results]
-        return jsonify(users)
+# @app.route('/users', methods=['GET'])
+# def all_users():
+#     if request.method == 'GET':
+#         results = User.query.all()
+#         users = [user.serialize for user in results]
+#         return jsonify(users)
 
 @app.route('/users/<uid>', methods=['GET', 'POST'])
 def get_user(uid):
@@ -83,12 +83,12 @@ def get_user(uid):
             'playlist': playlist.serialize
         })
 
-@app.route('/playlists', methods=['GET'])
-def all_playlists():
-    if request.method == 'GET':
-        results = Playlist.query.all()
-        playlists = [playlist.serialize for playlist in results]
-        return jsonify(playlists)
+# @app.route('/playlists', methods=['GET'])
+# def all_playlists():
+#     if request.method == 'GET':
+#         results = Playlist.query.all()
+#         playlists = [playlist.serialize for playlist in results]
+#         return jsonify(playlists)
 
 @app.route('/auth/register', methods=['POST'])
 def register_user():
