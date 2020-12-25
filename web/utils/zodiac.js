@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const birthday_to_zodiac = (month, day) => {
     if (month === 12){ 
         if (day < 22) {return "sagittarius"}
@@ -55,4 +57,12 @@ export const birthday_to_zodiac = (month, day) => {
         if (day < 22) {return "scorpio"}
         else          {return "sagittarius"}
     } 
+}
+
+export const fetchHoroscope = async (zodiac) => {
+    let res = await axios.post(`https://aztro.sameerkumar.website?sign=${zodiac}&day=today`)
+    if(res.status === 200) {
+        console.log(res.data)
+        return res.data.description
+    }
 }
