@@ -45,8 +45,8 @@ import json
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-db = SQLAlchemy(app)
 CORS(app)
+db = SQLAlchemy(app)
 
 # Testing route/main route
 @app.route('/')
