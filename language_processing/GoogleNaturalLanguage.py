@@ -1,7 +1,6 @@
 # Imports the Google Cloud client library
 from google.cloud import language_v1
 
-
 class LanguageClient:
     """
     Class to interface the google natural language API
