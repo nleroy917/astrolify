@@ -12,7 +12,7 @@ import ProfileNav from '../components/layout/ProfileNav';
 import { fetchHoroscope, analyzeHoroscope } from '../utils/zodiac';
 import { generateGreeting} from '../config/greetings';
 import { fetchSpotifyData } from '../utils/spotify';
-import Playlist from "../components/profile/playlist";
+import Playlist from "../components/profile/Playlist";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
