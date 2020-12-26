@@ -178,6 +178,26 @@ def register_user():
         'playlist': playlist,
     })
 
+@app.route('/horoscope/analysis', methods=['POST'])
+def analyze_horoscope():
+    # get the data from the post
+    data = request.json
+    content = data['content']
+
+    # get google client and analyze
+    gclient = LanguageClient()
+    sentiment = gclient.get_sentiment(content)
+    entities = gclient.get_entities(content)
+
+    # destruct object - save mems
+    del gclient
+
+    # return
+    return jsonify({
+        'sentiment': {'score': sentiment.score, 'magnitude': sentiment.magnitude},
+        'entities': [entity.name for entity in entities]
+    })
+
 
 if __name__ =='__main__':
     app.run()

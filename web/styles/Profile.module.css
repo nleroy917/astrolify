@@ -12,6 +12,7 @@
     border-bottom: white 1px solid;
     border-top: white 1px solid;
     padding: 20px;
+    margin-bottom: 10px;
 }
 
 .horoscope {
@@ -26,16 +27,48 @@
 }
 
 .horoscopeAnalysisWrapper {
-    border: red solid 1px;
     width: 60%;
     height: 450px;
     margin: 5px;
+    font-size: 28px;
+    padding: 10px;
+    font-weight: 300;
 }
 
 .playlistWrapper {
-    border: green solid 1px;
     width: 40%;
     height: 450px;
     margin: 5px;
     color: white;
+    overflow-y: scroll;
+    border: white 2px solid;
+    border-radius: 5px;
+}
+
+.playlistInnerWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.playlistHeader {
+     font-size: 18px;
+}
+
+@media(max-width: 768px) {
+    .innerWrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .playlistWrapper, .horoscopeAnalysisWrapper {
+        width: 100%;
+        height: 100%;
+    }
+    .horoscope {
+        font-size: 22px;
+    }
+    .landingTitle {
+        font-size: 36px;
+    }
 }

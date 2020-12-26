@@ -24,6 +24,25 @@
   align-items: center;
 }
 
+.footer {
+  padding: 15px;
+  color: #888888;
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.textLink {
+  font-size: inherit;
+}
+
+.textLink:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .landingText {
       font-size: 70px;
@@ -31,5 +50,10 @@
   .landingSubText {
     font-size: 26px;
     text-align: center;
+  }
+  .footer {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }

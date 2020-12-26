@@ -9,9 +9,10 @@ import commonstyles from '../styles/common.module.css';
 
 import Layout from '../components/layout/Layout';
 import ProfileNav from '../components/layout/ProfileNav';
-import { fetchHoroscope } from '../utils/zodiac';
+import { fetchHoroscope, analyzeHoroscope } from '../utils/zodiac';
 import { generateGreeting} from '../config/greetings';
 import { fetchSpotifyData } from '../utils/spotify';
+import Playlist from "../components/profile/playlist";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
@@ -21,6 +22,7 @@ const Profile = () => {
     const [playlist, setPlaylist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [horoscope, setHoroscope] = useState('')
+    const [horoscopeAnalysis, setHoroscopeAnalysis] = useState(null);
 
     const fetchData = async (user) => {
       firebase.auth().currentUser.getIdToken(true).then(async function(idToken) {
@@ -32,19 +34,29 @@ const Profile = () => {
           // call server to get user's profile
           let res = await axios.get(`${API_BASE}/users/${user.uid}`, {headers: hdrs})
 
-          // if sucess - proceed
+          // if sucess - procceed - this
+          // is a goddamn mess I know -
+          // it's not my fault javascript is just
+          // so ugly.
           if(res.status === 200) {
             let data = res.data
             setProfile(data.user)
             setPlaylist(data.playlist)
             fetchHoroscope(data.user.zodiac)
-              .then(horoscope=>setHoroscope(horoscope))
-            setLoading(false)
+              .then(horoscope=>{
+                setHoroscope(horoscope)
+                analyzeHoroscope(horoscope)
+                  .then(analysis=>{
+                    setHoroscopeAnalysis(analysis)
+                  })
+                
+              })
             fetchSpotifyData(data.user.spotify_refresh_token, data.playlist.playlist_id)
               .then(playlist_data=>{
                 console.log(playlist_data.body.tracks)
                 setPlaylist({...playlist_data, tracks: playlist_data.body.tracks})
               })
+            setLoading(false)
         }
       } catch(error) {
         alert(error)
@@ -80,21 +92,30 @@ const Profile = () => {
                   </div>
                 </div>
                 <div className={styles.innerWrapper}>
-                  <div className={styles.horoscopeAnalysisWrapper}></div>
+                  <div className={styles.horoscopeAnalysisWrapper}>
+                    {
+                      horoscopeAnalysis
+                    ? <div>
+                        {horoscopeAnalysis.analysis}
+                      </div>
+                    : <div></div>
+                    }
+                  </div>
                   <div className={styles.playlistWrapper}>
-                    <ul>
+                  <div className={styles.playlistInnerWrapper}>
                     {
                       playlist.tracks 
                     ? playlist.tracks.items.map((track_obj,i) =>{
                         return (
-                        <li key={i}>
-                          {`${track_obj.track.name} - ${track_obj.track.artists[0].name}`}
-                        </li>
+                         <Playlist 
+                           track={track_obj.track}
+                           key={i}
+                         />
                         )
                         }) 
                     : 'Loading playlist...'
                     }
-                    </ul>
+                    </div>
                   </div>
                 </div>
               </Layout>

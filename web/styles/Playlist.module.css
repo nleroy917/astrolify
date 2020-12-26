@@ -1,0 +1,41 @@
+.playlist {
+    background: rgb(41, 41, 41);
+    color: white;
+    border-radius: 5px;
+    min-height: 30px;
+    width: calc(100%-10px);
+    padding: 10px;
+    margin: 10px;
+    border: white solid 1px;
+    box-shadow: white 4px 4px;
+    transition: all ease 0.1s;
+}
+.playlist:hover {
+    transform: translate(3px, 3px);
+    box-shadow: white 1px 1px;
+}
+.innerWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+.infoWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: ease-in-out 0.3s;
+}
+.playlistImg {
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+.trackTitle {
+    font-weight: 500;
+}
+
+.trackArtist {
+    font-weight: 300;
+}

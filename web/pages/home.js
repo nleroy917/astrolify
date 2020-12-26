@@ -27,6 +27,7 @@ export default function Home() {
         <div className={starstyles.star} ></div>
         <div className={starstyles.star} ></div>
         <div className={starstyles.star} ></div>
+        <div className={starstyles.star} ></div>
       </div>
       <div className={styles.landingContainer}>
         <div className={common_styles.centerY}>
@@ -43,6 +44,30 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <footer className={styles.footer}>
+        <div>
+          Astrolify v0.0.1
+        </div>
+        <div>
+         <span>
+          <p
+            className={styles.textLink}
+            onClick={()=>router.push('https://nathanleroy.io')}
+          >
+            Created by Nathan LeRoy
+          </p>
+          </span>
+        </div>
+        <div>
+          <p 
+            style={{margin: '0px'}}
+            className={styles.textLink}
+            onClick={()=>router.push('https://github.com/NLeRoy917/astrolify/issues/new')}
+          >
+            Report an issue
+          </p>
+        </div>
+      </footer>
      </Layout>
      </div>
     </>

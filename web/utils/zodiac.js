@@ -1,4 +1,5 @@
 import axios from 'axios';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
 export const birthday_to_zodiac = (month, day) => {
     if (month === 12){ 
@@ -64,5 +65,42 @@ export const fetchHoroscope = async (zodiac) => {
     if(res.status === 200) {
         console.log(res.data)
         return res.data.description
+    }
+}
+
+export const analyzeHoroscope = async (horoscope) => {
+    let data = {
+        content: horoscope
+    }
+    let res = await axios.post(`${API_BASE}/horoscope/analysis`, data)
+    if(res.status === 200) {
+        let data = await res.data
+        let sentiment = data.sentiment
+        let magnitude = data.magnitude
+        let sentiment_string = ''
+        let magnitude_string = ''
+
+        // generate the sentiment string
+             if(sentiment>=0.7){sentiment_string='very postitive'}
+        else if(sentiment>=0.4){sentiment_string='postitive'}
+        else if(sentiment>=0.1){sentiment_string='slightly postitive'}
+        else if(sentiment>=-0.1){sentiment_string='nuetral'}
+        else if(sentiment>=-0.4){sentiment_string='slightly negative'}
+        else if(sentiment>=-0.7){sentiment_string='negative'}
+        else {sentiment_string='very negative'}
+
+        // generate the magnitude string
+             if(magnitude>=3){magnitude_string='very strongly'}
+        else if(magnitude>=2){magnitude_string='strongly'}
+        else if(magnitude>=1){magnitude_string='weakly'}
+        else {magnitude_string='very weakly'}
+        
+        let analysis = `Today's horoscope has an overall ${sentiment_string} tone and expresses this tone ${magnitude_string}`
+
+        return {
+            analysis: analysis,
+            sentiment: sentiment,
+            magnitude: magnitude
+        }
     }
 }
