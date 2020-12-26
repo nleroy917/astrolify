@@ -75,19 +75,19 @@ export const analyzeHoroscope = async (horoscope) => {
     let res = await axios.post(`${API_BASE}/horoscope/analysis`, data)
     if(res.status === 200) {
         let data = await res.data
-        let sentiment = data.sentiment
-        let magnitude = data.magnitude
-        let sentiment_string = ''
+        let score = data.sentiment.score
+        let magnitude = data.sentiment.magnitude
+        let score_string = ''
         let magnitude_string = ''
 
         // generate the sentiment string
-             if(sentiment>=0.7){sentiment_string='very postitive'}
-        else if(sentiment>=0.4){sentiment_string='postitive'}
-        else if(sentiment>=0.1){sentiment_string='slightly postitive'}
-        else if(sentiment>=-0.1){sentiment_string='nuetral'}
-        else if(sentiment>=-0.4){sentiment_string='slightly negative'}
-        else if(sentiment>=-0.7){sentiment_string='negative'}
-        else {sentiment_string='very negative'}
+             if(score>=0.7){score_string='very postitive'}
+        else if(score>=0.4){score_string='postitive'}
+        else if(score>=0.1){score_string='slightly postitive'}
+        else if(score>=-0.1){score_string='nuetral'}
+        else if(score>=-0.4){score_string='slightly negative'}
+        else if(score>=-0.7){score_string='negative'}
+        else {score_string='very negative'}
 
         // generate the magnitude string
              if(magnitude>=3){magnitude_string='very strongly'}
@@ -95,12 +95,13 @@ export const analyzeHoroscope = async (horoscope) => {
         else if(magnitude>=1){magnitude_string='weakly'}
         else {magnitude_string='very weakly'}
         
-        let analysis = `Today's horoscope has an overall ${sentiment_string} tone and expresses this tone ${magnitude_string}`
+        let analysis = `Today's horoscope has an overall ${score_string} tone and expresses this tone ${magnitude_string}`
 
         return {
             analysis: analysis,
-            sentiment: sentiment,
-            magnitude: magnitude
+            sentiment: data.sentiment,
+            entities: data.entities
+
         }
     }
 }

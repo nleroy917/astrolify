@@ -10,9 +10,6 @@ const ProfileNav = ({ zodiac }) => {
     return (
         <>
           <div className={styles.nav}>
-              <div className={styles.iconWrapper}>
-                <img className={styles.icon} src={`/signs/${zodiac}.svg`} />
-              </div>
                 <p
                   className={styles.textLink}
                   onClick={()=>{

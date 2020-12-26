@@ -43,15 +43,6 @@
     transition: ease 0.15s;
 }
 
-.icon {
-    filter: invert(1);
-    height: 100px;
-    width: 100px;
-    border-radius: 50%;
-    border: solid black 2px;
-    padding: 10px;
-}
-
 .textLink {
     font-size: 14px;
     font-weight: 300;

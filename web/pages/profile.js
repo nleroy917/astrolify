@@ -84,6 +84,9 @@ const Profile = () => {
                   zodiac={profile.zodiac}
                 />
                 <div className={styles.titleWrapper}>
+                  <div className={styles.iconWrapper}>
+                    <img className={styles.icon} src={`/signs/${profile.zodiac}.svg`} />
+                  </div>
                   <h1 className={styles.landingTitle}>{generateGreeting(profile.name, profile.zodiac)}</h1>
                 </div>
                 <div className={styles.horoscopeWrapper}>
@@ -96,7 +99,27 @@ const Profile = () => {
                     {
                       horoscopeAnalysis
                     ? <div>
+                       <div>
                         {horoscopeAnalysis.analysis}
+                       </div>
+                       <h4 style={{marginBottom: '10px', marginTop: '20px'}}>Sentiment Values:</h4>
+                       <div>
+                        {`Score: ${Math.round(horoscopeAnalysis.sentiment.score*100)/100}`}
+                       </div>
+                       <div>
+                        {`Magnitude: ${Math.round(horoscopeAnalysis.sentiment.magnitude*100)/100}`}
+                       </div>
+                       <h4 style={{marginBottom: '10px', marginTop: '20px'}}>Found Entities:</h4>
+                       <div>
+                        <ul>
+                         {horoscopeAnalysis.entities.map((entity, i)=>{
+                           return(
+                            <li>{entity.charAt(0).toUpperCase() + entity.slice(1)}</li>
+                           )
+                           })
+                          }
+                         </ul>
+                       </div>
                       </div>
                     : <div></div>
                     }
