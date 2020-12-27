@@ -58,6 +58,7 @@ const SignUp = ({code, error}) => {
           } catch(error) {
             // need to deleted user from firebase if any error occurs on the server
             firebase.auth().currentUser.delete()
+            setLoading(false)
             setError(true)
             alert(error)
           }
