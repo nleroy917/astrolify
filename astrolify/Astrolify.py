@@ -350,6 +350,8 @@ class Astrolify:
 
         # add tracks to the playlist
         snapshot = self._spclient.add_tracks_to_playlist(id, track_uris)
+        print('Done.')
+        
         return snapshot
 
     def __del__(self):

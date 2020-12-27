@@ -2,50 +2,101 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from astrolify.Astrolify import Astrolify
 from horoscopes.Horoscopes import Horoscope
 from horoscopes.Client import HoroscopeClient
+from language_processing.GoogleNaturalLanguage import LanguageClient
+from dotenv import load_dotenv
+from postgres.models import *
+import os
+
+# Env variables
+load_dotenv()
+POSTGRES_URI=os.getenv('DATABASE_URL')
+from postgres.driver import Driver
+
+dbdriver = Driver(POSTGRES_URI)
 
 sched = BlockingScheduler()
+@sched.scheduled_job(
+    'interval', 
+    seconds=3
+)
 
-@sched.scheduled_job('interval', hour=1)
-def timed_job():
-    print('This job is run every 10 seconds')
-
-@sched.scheduled_job('cron', day_of_week='mon-fri', hour=17)
 def update_playlists():
 
     # init the horoscope client
     hclient = HoroscopeClient()
 
+    # init google client
+    gclient = LanguageClient()
+
     # get all the horoscopes
-    hor_capricorn =  hclient.get_horoscope('capricorn')
-    hor_aquarius =  hclient.get_horoscope('aquarius')
-    hor_pisces =  hclient.get_horoscope('pisces')
-    hor_aries =  hclient.get_horoscope('aries')
-    hor_taurus =  hclient.get_horoscope('taurus')
-    hor_gemini =  hclient.get_horoscope('gemini')
-    hor_cancer =  hclient.get_horoscope('cancer')
-    hor_leo =  hclient.get_horoscope('leo')
-    hor_virgo =  hclient.get_horoscope('virgo')
-    hor_libra =  hclient.get_horoscope('libra')
-    hor_scorpio =  hclient.get_horoscope('scorpio')
-    hor_sagittarius =  hclient.get_horoscope('sagittarius')
+    hor_capricorn =  hclient.get_horoscope('capricorn', 'today')
+    hor_aquarius =  hclient.get_horoscope('aquarius', 'today')
+    hor_pisces =  hclient.get_horoscope('pisces', 'today')
+    hor_aries =  hclient.get_horoscope('aries', 'today')
+    hor_taurus =  hclient.get_horoscope('taurus', 'today')
+    hor_gemini =  hclient.get_horoscope('gemini', 'today')
+    hor_cancer =  hclient.get_horoscope('cancer', 'today')
+    hor_leo =  hclient.get_horoscope('leo', 'today')
+    hor_virgo =  hclient.get_horoscope('virgo', 'today')
+    hor_libra =  hclient.get_horoscope('libra', 'today')
+    hor_scorpio =  hclient.get_horoscope('scorpio', 'today')
+    hor_sagittarius =  hclient.get_horoscope('sagittarius', 'today')
 
-     
-    # create astrolify objects for each zodiac
-    ast_capricorn = Astrolify(zodiac='capricorn', horoscope=hor_capricorn, worker=True)
-    ast_aquarius = Astrolify(zodiac='aquarius', horoscope=hor_aquarius, worker=True)
-    ast_pisces = Astrolify(zodiac='pisces', horoscope=hor_pisces, worker=True)
-    ast_aries = Astrolify(zodiac='aries', horoscope=hor_aries, worker=True)
-    ast_taurus = Astrolify(zodiac='taurus', horoscope=hor_taurus, worker=True)
-    ast_gemini = Astrolify(zodiac='gemini', horoscope=hor_gemini, worker=True)
-    ast_cancer = Astrolify(zodiac='cancer', horoscope=hor_capricorn, worker=True)
-    ast_leo = Astrolify(zodiac='leo', horoscope=hor_leo, worker=True)
-    ast_virgo = Astrolify(zodiac='virgo', horoscope=hor_virgo, worker=True)
-    ast_libra = Astrolify(zodiac='libra', horoscope=hor_libra, worker=True)
-    ast_scorpio = Astrolify(zodiac='scorpio', horoscope=hor_, worker=True)
-    ast_sagittarius = Astrolify(zodiac='sagittarius', horoscope=hor_sagittarius, worker=True)
+    # get sentiment for each horoscope
+    hor_capricorn.sentiment = gclient.get_sentiment(hor_capricorn.content)
+    hor_aquarius.sentiment = gclient.get_sentiment(hor_aquarius.content)
+    hor_pisces.sentiment =  gclient.get_sentiment(hor_pisces.content)
+    hor_aries.sentiment = gclient.get_sentiment(hor_aries.content)
+    hor_taurus.sentiment = gclient.get_sentiment(hor_taurus.content)
+    hor_gemini.sentiment = gclient.get_sentiment(hor_gemini.content)
+    hor_cancer.sentiment = gclient.get_sentiment(hor_cancer.content)
+    hor_leo.sentiment = gclient.get_sentiment(hor_leo.content)
+    hor_virgo.sentiment = gclient.get_sentiment(hor_virgo.content)
+    hor_libra.sentiment = gclient.get_sentiment(hor_libra.content)
+    hor_scorpio.sentiment = gclient.get_sentiment(hor_scorpio.content)
+    hor_sagittarius.sentiment = gclient.get_sentiment(hor_scorpio.content)
 
-    # Status
-    print('This will update the user playlists each week... hopefully.')
+    # get entities for each horoscope
+    hor_capricorn.entities = gclient.get_entities(hor_capricorn.content)
+    hor_aquarius.entities = gclient.get_entities(hor_aquarius.content)
+    hor_pisces.entities =  gclient.get_entities(hor_pisces.content)
+    hor_aries.entities = gclient.get_entities(hor_aries.content)
+    hor_taurus.entities = gclient.get_entities(hor_taurus.content)
+    hor_gemini.entities = gclient.get_entities(hor_gemini.content)
+    hor_cancer.entities = gclient.get_entities(hor_cancer.content)
+    hor_leo.entities = gclient.get_entities(hor_leo.content)
+    hor_virgo.entities = gclient.get_entities(hor_virgo.content)
+    hor_libra.entities = gclient.get_entities(hor_libra.content)
+    hor_scorpio.entities = gclient.get_entities(hor_scorpio.content)
+    hor_sagittarius.entities = gclient.get_entities(hor_scorpio.content)
+
+    # store in a lookup dictionary
+    horoscope_lookup = {
+        'capricorn': hor_capricorn,
+        'aquarius': hor_aquarius,
+        'pisces': hor_pisces,
+        'aries': hor_aries,
+        'taurus': hor_taurus,
+        'gemini': hor_gemini,
+        'cancer': hor_cancer,
+        'leo': hor_leo,
+        'virgo': hor_virgo,
+        'libra': hor_libra,
+        'scorpio': hor_scorpio,
+        'sagittarius': hor_sagittarius
+    }
+
+    users = dbdriver.query_all(User)
+    for user in users:
+        horoscope = horoscope_lookup[user['zodiac']]
+        ast = Astrolify(
+            zodiac=user['zodiac'],
+            sp_refresh_token=user['spotify_refresh_token'],
+            horoscope=horoscope,
+            worker=True
+          )
+        ast.update_playlist(user['playlist_id'])
+
 
 
 sched.start()
