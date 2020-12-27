@@ -18,6 +18,7 @@ import "firebase/auth";
 
 import axios from 'axios';
 import { birthday_to_zodiac } from '../utils/zodiac';
+import Button from '../components/common/Button';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 
@@ -32,6 +33,7 @@ const SignUp = ({code, error}) => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
 
     const handleRegistration = async () => {
         setLoading(true)
@@ -56,6 +58,7 @@ const SignUp = ({code, error}) => {
           } catch(error) {
             // need to deleted user from firebase if any error occurs on the server
             firebase.auth().currentUser.delete()
+            setError(true)
             alert(error)
           }
         })
@@ -143,6 +146,15 @@ const SignUp = ({code, error}) => {
                    style={{margin: '30px'}}
                 />
                 </div>
+             : error
+             ? <div className={commonstyles.centerXY}>
+                 <h1>An error occured :(</h1>
+                 <Button
+                   onClick={()=>router.push('/')}
+                 >
+                   Take me back
+                 </Button>
+               </div>
              : <div></div>
            }
           </div>
