@@ -54,6 +54,7 @@ const SignUp = ({code, error}) => {
               router.push('/profile')
             }
           } catch(error) {
+            // need to deleted user from firebase if any error occurs on the server
             console.log(error)
               alert(error)
           }
