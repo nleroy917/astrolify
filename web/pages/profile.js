@@ -15,6 +15,12 @@ import { fetchSpotifyData } from '../utils/spotify';
 import Playlist from "../components/profile/Playlist";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const now = new Date()
+const dayOfWeek = days[ now.getDay() ];
+const currentMonth = months[ now.getMonth() ];
 
 const Profile = () => {
     const router = useRouter();
@@ -84,10 +90,13 @@ const Profile = () => {
                   zodiac={profile.zodiac}
                 />
                 <div className={styles.titleWrapper}>
+                <h1 className={styles.landingTitle}>{`${dayOfWeek} - ${currentMonth} ${now.getDate()}, ${now.getFullYear()}`}</h1>
+                <div className={styles.signWrapper}>
                   <div className={styles.iconWrapper}>
                     <img className={styles.icon} src={`/signs/${profile.zodiac}.svg`} />
                   </div>
-                  <h1 className={styles.landingTitle}>{generateGreeting(profile.name, profile.zodiac)}</h1>
+                  <h2 className={styles.zodiac}>{`${profile.zodiac.charAt(0).toUpperCase() + profile.zodiac.slice(1)}`}</h2>
+                </div>
                 </div>
                 <div className={styles.horoscopeWrapper}>
                   <div className={styles.horoscope}>
