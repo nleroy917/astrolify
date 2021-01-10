@@ -3,10 +3,9 @@
     margin: 10px;
     margin: 10px;
     background: black;
-    border: white solid 1px;
-    color: white;
+    border: #FFD263 solid 1px;
+    color: #FFD263;
     font-size: small;
-    border-radius: 10px;
 }
 
 .invertedButtonMedium {
@@ -15,10 +14,9 @@
     padding-top: 10px;
     padding-bottom: 10px;
     background: black;
-    border: white solid 1px;
-    color: white;
+    border: #FFD263 solid 1px;
+    color: #FFD263;
     font-size: medium;
-    border-radius: 10px;
 }
 
 .invertedButtonLarge {
@@ -28,16 +26,15 @@
     padding-bottom: 15px;
     margin: 10px;
     background: black;
-    border: white solid 1px;
-    color: white;
+    border: #FFD263 solid 1px;
+    color: #FFD263;
     font-size: large;
-    border-radius: 10px;
 }
 
 .invertedButtonSmall:hover, .invertedButtonMedium:hover, .invertedButtonLarge:hover {
-    background: white;
+    background: #FFD263;
     color: black;
-    border: solid white 1px;
+    border: solid black 1px;
     transition: ease 0.15s;
 }
 .invertedButtonSmall:focus, .invertedButtonMedium:focus, .invertedButtonLarge:focus {

@@ -29,7 +29,7 @@ const GettingStarted = () => {
     const router = useRouter()
     return (
         <>
-        <div className={styles.starryNight}>
+        <div className={commonstyles.starryNight}>
          <Layout
            seo={{
             title: "Getting Started"

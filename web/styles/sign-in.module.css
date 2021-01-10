@@ -19,18 +19,17 @@
 .submitButton {
     padding: 15px;
     font-size: 18px;
-    background: rgb(250, 76, 76);
-    border-radius: 5px;
+    background: #FFD263;
     outline: none;
     border: none;
-    color: white;
+    color: black;
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
 .submitButton:hover {
-    background: #e34646;
-    color: whitesmoke;
+    background: #e4bc59;
+    color: black;
 }
 
 .errorContainer {

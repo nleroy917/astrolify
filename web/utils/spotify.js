@@ -3,6 +3,8 @@ import querystring from 'querystring';
 import qs from 'qs'
 import SpotifyWebApi from 'spotify-web-api-node';
 
+const SPOTTY_BASE = 'https://spottydata-api.herokuapp.com'
+
 export const fetchSpotifyData = async (refreshToken, playlist_id) => {
   // set body and headers
   let data = qs.stringify({
@@ -23,6 +25,11 @@ export const fetchSpotifyData = async (refreshToken, playlist_id) => {
       accessToken: data.access_token
     })
     let playlist_data = await sp.getPlaylist(playlist_id)
-    return playlist_data
+    let analysis = await axios.get(`${SPOTTY_BASE}/${playlist_id}/analysis`, {headers: {access_token: data.access_token}})
+    let return_data = {
+      playlist_data: playlist_data, 
+      analysis: analysis
+    }
+    return return_data
   }
 }

@@ -13,6 +13,8 @@ import { fetchHoroscope, analyzeHoroscope } from '../utils/zodiac';
 import { generateGreeting} from '../config/greetings';
 import { fetchSpotifyData } from '../utils/spotify';
 import Playlist from "../components/profile/Playlist";
+import SentimentChart from "../components/profile/SentimentChart";
+import PlaylistRadar from "../components/profile/PlaylistRadar";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
 const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -58,9 +60,14 @@ const Profile = () => {
                 
               })
             fetchSpotifyData(data.user.spotify_refresh_token, data.playlist.playlist_id)
-              .then(playlist_data=>{
-                console.log(playlist_data.body.tracks)
-                setPlaylist({...playlist_data, tracks: playlist_data.body.tracks})
+              .then(spotify_data=>{
+                //console.log(spotify_data)
+                setPlaylist({
+                  ...spotify_data.playlist_data, 
+                  tracks: spotify_data.playlist_data.body.tracks,
+                  analysis: spotify_data.playlist_data.analysis
+                })
+                // console.log(spotify_data)
               })
             setLoading(false)
         }
@@ -89,15 +96,7 @@ const Profile = () => {
                 <ProfileNav 
                   zodiac={profile.zodiac}
                 />
-                <div className={styles.titleWrapper}>
-                <h1 className={styles.landingTitle}>{`${dayOfWeek} - ${currentMonth} ${now.getDate()}, ${now.getFullYear()}`}</h1>
-                <div className={styles.signWrapper}>
-                  <div className={styles.iconWrapper}>
-                    <img className={styles.icon} src={`/signs/${profile.zodiac}.svg`} />
-                  </div>
-                  <h2 className={styles.zodiac}>{`${profile.zodiac.charAt(0).toUpperCase() + profile.zodiac.slice(1)}`}</h2>
-                </div>
-                </div>
+
                 <div className={styles.horoscopeWrapper}>
                   <div className={styles.horoscope}>
                     {`"${horoscope}"`}
@@ -111,23 +110,17 @@ const Profile = () => {
                        <div>
                         {horoscopeAnalysis.analysis}
                        </div>
-                       <h4 style={{marginBottom: '10px', marginTop: '20px'}}>Sentiment Values:</h4>
-                       <div>
-                        {`Score: ${Math.round(horoscopeAnalysis.sentiment.score*100)/100}`}
+                       <div
+                         className={styles.sentimentChartWrapper}
+                       >
+                         <SentimentChart
+                           score={0.2}
+                           magnitude={5}
+                         />
                        </div>
                        <div>
-                        {`Magnitude: ${Math.round(horoscopeAnalysis.sentiment.magnitude*100)/100}`}
-                       </div>
-                       <h4 style={{marginBottom: '10px', marginTop: '20px'}}>Found Entities:</h4>
-                       <div>
-                        <ul>
-                         {horoscopeAnalysis.entities.map((entity, i)=>{
-                           return(
-                            <li>{entity.charAt(0).toUpperCase() + entity.slice(1)}</li>
-                           )
-                           })
-                          }
-                         </ul>
+                        <PlaylistRadar
+                        />
                        </div>
                       </div>
                     : <div></div>

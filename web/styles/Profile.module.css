@@ -14,6 +14,11 @@
     box-shadow: white 4px 4px;
 }
 
+.section {
+    background:rgb(41, 41, 41);
+    border-radius: 5px;
+}
+
 .signWrapper {
     display: flex;
     flex-direction: row;
@@ -52,7 +57,7 @@
 }
 
 .horoscope {
-    font-size: 28px;
+    font-size: 2.5rem;
     font-weight: 200;
     text-align: center;
 }
@@ -65,22 +70,21 @@
 .horoscopeAnalysisWrapper {
     width: 60%;
     height: 450px;
-    margin: 5px;
-    font-size: 28px;
+    margin: 0.875em;
+    font-size: 2.0rem;
     padding: 20px;
     font-weight: 300;
-    border: white 2px solid;
     border-radius: 5px;
     color: white;
+    text-align: center;
 }
 
 .playlistWrapper {
     width: 40%;
-    height: 450px;
-    margin: 5px;
+    height: 100%;
+    margin: 0.875em;
     color: white;
     overflow-y: scroll;
-    border: white 2px solid;
     border-radius: 5px;
 }
 
@@ -93,6 +97,19 @@
      font-size: 18px;
 }
 
+.radarWrapper {
+
+}
+
+.sentimentChartWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 0.875em;
+    margin-bottom: 0.875em;
+}
+
 @media(max-width: 768px) {
     .innerWrapper {
         display: flex;
@@ -103,9 +120,7 @@
     .playlistWrapper, .horoscopeAnalysisWrapper {
         width: 100%;
         height: 100%;
-    }
-    .horoscope {
-        font-size: 22px;
+        text-align: center;
     }
     .landingTitle {
         font-size: 36px;

@@ -1,6 +1,6 @@
 .playlist {
-    background: rgb(41, 41, 41);
-    color: white;
+    background: #FFD263;
+    color: black;
     border-radius: 5px;
     min-height: 30px;
     width: calc(100%-10px);
