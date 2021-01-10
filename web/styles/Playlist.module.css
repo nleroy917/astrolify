@@ -9,6 +9,7 @@
     border: white solid 1px;
     box-shadow: white 4px 4px;
     transition: all ease 0.1s;
+    text-align: left;
 }
 .playlist:hover {
     transform: translate(3px, 3px);

@@ -2,16 +2,23 @@ import { loadGetInitialProps } from 'next/dist/next-server/lib/utils';
 import { Radar } from 'react-chartjs-2';
 
 const PlaylistRadar = () => {
-    const options = { 
+    const options = {
+                responsive: true,
                 scale:{
                   pointLabels:{
                      fontColor: "white",
-                     fontSize: 18
+                     fontSize: 16
                   },
                   gridLines: {
                     color: 'white',
                     fontColor: 'white'
                   },
+                  ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 1,
+                    backdropColor: 'rgba(0,0,0,0)',
+                    fontColor: '#FFF'
+                }
               } ,
               legend: {
                   labels: {
@@ -36,8 +43,10 @@ const PlaylistRadar = () => {
                 datasets: [
                     {
                       label: 'Playlist Analysis',
-                      backgroundColor: '#FFD263',
-                      data: [0.6, 0.7,0.2]
+                      backgroundColor: 'rgba(255, 210, 97, 0.8)',
+                      borderColor: '#FFF',
+                      borderWidth: 1,
+                      data: [0.6, 0.7, 0.2]
                     }
                 ]
             }}

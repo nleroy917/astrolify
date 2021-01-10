@@ -30,7 +30,7 @@ const Profile = () => {
     const [playlist, setPlaylist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [horoscope, setHoroscope] = useState('')
-    const [horoscopeAnalysis, setHoroscopeAnalysis] = useState(null);
+    const [horoscopeAnalysis, setHoroscopeAnalysis] = useState('');
 
     const fetchData = async (user) => {
       firebase.auth().currentUser.getIdToken(true).then(async function(idToken) {
@@ -53,8 +53,9 @@ const Profile = () => {
             fetchHoroscope(data.user.zodiac)
               .then(horoscope=>{
                 setHoroscope(horoscope)
-                analyzeHoroscope(horoscope)
+                analyzeHoroscope(horoscope.description)
                   .then(analysis=>{
+                    console.log(analysis)
                     setHoroscopeAnalysis(analysis)
                   })
                 
@@ -89,7 +90,7 @@ const Profile = () => {
              if(!profile){fetchData(user)}
             return (
              <div className={commonstyles.starryNight}>
-              {!loading ?
+            {!loading ?
               <Layout
                 seo={{title: "Profile"}}
               >
@@ -99,26 +100,60 @@ const Profile = () => {
 
                 <div className={styles.horoscopeWrapper}>
                   <div className={styles.horoscope}>
-                    {`"${horoscope}"`}
+                    {`${horoscope.description}`}
+                  </div>
+                  <div className={styles.compatibility}>
+                   <div className={styles.compatibilityItem}>
+                    Musical Compatibility: {`${horoscope.compatibility}`}
+                   </div>
+                   <div className={styles.compatibilityItem}>
+                    Musical Peak: {`${horoscope.lucky_time}`}
+                   </div>
+                  </div>
+                </div>
+                <div className={styles.dividerWrapper}>
+                  <div className={styles.dividingLine}></div>
+                </div>
+                <div className={styles.signsWrapper}>
+                  <div>
+                    <img 
+                      className={styles.icon}
+                      src={`/signs/${profile.zodiac}.svg`}
+                    />
+                  </div>
+                  <div>
+                    <img 
+                      className={styles.icon}
+                      src={`/signs/${horoscope.compatibility}.svg`}
+                    />
                   </div>
                 </div>
                 <div className={styles.innerWrapper}>
                   <div className={styles.horoscopeAnalysisWrapper}>
                     {
-                      horoscopeAnalysis
+                      horoscopeAnalysis && playlist
                     ? <div>
-                       <div>
+                       <div className={styles.sentimentAnalysisWrapper}>
                         {horoscopeAnalysis.analysis}
                        </div>
                        <div
                          className={styles.sentimentChartWrapper}
                        >
                          <SentimentChart
-                           score={0.2}
-                           magnitude={5}
+                           score={(horoscopeAnalysis.sentiment.score + 1)/2 * 100}
+                           magnitude={(horoscopeAnalysis.sentiment.magnitude/5*100)}
                          />
                        </div>
-                       <div>
+                       <div className={styles.genreWrapper}>
+                        {
+                          playlist.analysis ? 
+                          playlist.analysis.genres.map((g,i)=>{
+                            return(g)
+                          })
+                          :<div></div>
+                        }
+                       </div>
+                       <div className={styles.radarWrapper}>
                         <PlaylistRadar
                         />
                        </div>

@@ -5,14 +5,17 @@ import {
 
 const SentimentChart = (props) => {
     const options = {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.2,
         scales: {
         xAxes: [{
             display: true,
             scaleLabel: {
                 display: true,
-                labelString: 'Amount (%)',
+                labelString: 'Sentiment',
                 fontColor:'#FFF',
-                fontSize: 24
+                fontSize: 18
             },
             gridLines: {
                 zeroLineColor: '#FFF'
@@ -26,9 +29,9 @@ const SentimentChart = (props) => {
             display: true,
             scaleLabel: {
                 display: true,
-                labelString: '',
+                labelString: '%',
                 fontColor: '#FFF',
-                fontSize: 24
+                fontSize: 12
             },
             gridLines: {
                 display: false,
@@ -51,6 +54,8 @@ const SentimentChart = (props) => {
         isMobile ? 
         <>
         <Bar
+          height={null}
+          width={null}
           options={options}
           data={{
               labels: ['Score', 'Magnitude'],

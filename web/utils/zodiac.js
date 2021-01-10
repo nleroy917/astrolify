@@ -64,7 +64,7 @@ export const fetchHoroscope = async (zodiac) => {
     let res = await axios.post(`https://aztro.sameerkumar.website?sign=${zodiac}&day=today`)
     if(res.status === 200) {
         console.log(res.data)
-        return res.data.description
+        return res.data
     }
 }
 
