@@ -22,7 +22,9 @@ const SentimentChart = (props) => {
             },
             ticks: {
                fontColor: "white",
-               fontSize: 16
+               fontSize: 16,
+               min: 0,
+               max: 100
               }
         }],
         yAxes: [{
@@ -39,7 +41,9 @@ const SentimentChart = (props) => {
             },
             ticks: {
                   fontColor: "white",
-                  fontSize: 16
+                  fontSize: 16,
+                  min: 0,
+                  max: 100
             }
         }]
      },

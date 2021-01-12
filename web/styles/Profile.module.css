@@ -94,9 +94,6 @@
 .sentimentAnalysisWrapper {
     padding: 0.275em;
     margin: 0.275em;
-    background-color: #FFD263;
-    color: black;
-    box-shadow: white 5px 5px;
 }
 
 .horoscopeAnalysisWrapper {
@@ -164,5 +161,10 @@
     }
     .compatibility {
         text-align: center;
+    }
+    .sentimentAnalysisWrapper {
+        box-shadow: white 5px 5px;
+        background-color: #FFD263;
+        color: black;
     }
 }
