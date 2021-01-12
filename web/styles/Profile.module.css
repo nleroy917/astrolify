@@ -94,10 +94,13 @@
 .sentimentAnalysisWrapper {
     padding: 0.275em;
     margin: 0.275em;
+    background-color: #FFD263;
+    color: black;
+    box-shadow: white 5px 5px;
 }
 
 .horoscopeAnalysisWrapper {
-    width: 60%;
+    width: 50%;
     height: 450px;
     margin: 0.875em;
     font-size: 1.75rem;

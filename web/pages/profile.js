@@ -150,7 +150,7 @@ const Profile = () => {
                           playlist.analysis.genres.map((g,i)=>{
                             return(g)
                           })
-                          :<div></div>
+                          : <div></div>
                         }
                        </div>
                        <div className={styles.radarWrapper}>

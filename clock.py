@@ -17,9 +17,8 @@ dbdriver = Driver(POSTGRES_URI)
 sched = BlockingScheduler()
 @sched.scheduled_job(
     'interval', 
-    seconds=3
+    hour=1
 )
-
 def update_playlists():
 
     # init the horoscope client
@@ -88,15 +87,14 @@ def update_playlists():
 
     users = dbdriver.query_all(User)
     for user in users:
+        print('Updating playlist for: {}({})'.format(user['name'],user['spotify_id']))
         horoscope = horoscope_lookup[user['zodiac']]
         ast = Astrolify(
-            zodiac=user['zodiac'],
+            zodiac=user['zodiac'].lower(), # force into lowercase
             sp_refresh_token=user['spotify_refresh_token'],
             horoscope=horoscope,
             worker=True
           )
         ast.update_playlist(user['playlist_id'])
 
-
-
-sched.start()
+sched.start() 

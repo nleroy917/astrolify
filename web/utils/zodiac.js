@@ -40,7 +40,7 @@ export const birthday_to_zodiac = (month, day) => {
     } 
           
     else if( month === 8){ 
-        if (day < 23) {return "Leo"} 
+        if (day < 23) {return "leo"} 
         else          {return "virgo"}
     } 
           
