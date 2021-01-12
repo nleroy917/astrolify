@@ -17,7 +17,7 @@ dbdriver = Driver(POSTGRES_URI)
 sched = BlockingScheduler()
 @sched.scheduled_job(
     'interval', 
-    hour=1
+    hours=1
 )
 def update_playlists():
 
