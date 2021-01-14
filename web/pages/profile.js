@@ -58,7 +58,7 @@ const Profile = () => {
                     console.log(analysis)
                     setHoroscopeAnalysis(analysis)
                   })
-                
+                  setLoading(false)
               })
             fetchSpotifyData(data.user.spotify_refresh_token, data.playlist.playlist_id)
               .then(spotify_data=>{
@@ -70,7 +70,6 @@ const Profile = () => {
                 })
                 // console.log(spotify_data)
               })
-            setLoading(false)
         }
       } catch(error) {
         alert(error)
@@ -124,7 +123,7 @@ const Profile = () => {
                   <div>
                     <img 
                       className={styles.icon}
-                      src={`/signs/${horoscope.compatibility}.svg`}
+                      src={`/signs/${horoscope.compatibility[0].toLowerCase() + horoscope.compatibility.slice(1)}.svg`}
                     />
                   </div>
                 </div>
